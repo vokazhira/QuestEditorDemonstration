@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,11 +17,15 @@ namespace Vokazhira.QuestEditor.Editor
 
         [SerializeField] private QuestWorkingCopy session;
         [SerializeField] private bool settingsVisible;
+        [SerializeField] private bool hasStoredView;
+        [SerializeField] private Vector3 viewPosition;
+        [SerializeField] private Vector3 viewScale = Vector3.one;
 
         private QuestEditorToolbar toolbar;
         private QuestSettingsPanel settingsPanel;
         private QuestLibraryView library;
         private Label graphPlaceholder;
+        private QuestGraphView graphView;
         private SerializedObject serializedGraph;
 
         private bool HasOpenQuest => session != null && session.IsAlive;
@@ -152,6 +157,10 @@ namespace Vokazhira.QuestEditor.Editor
 
             var center = new VisualElement();
             center.AddToClassList("qe-center");
+            graphView = new QuestGraphView(this);
+            graphView.ModelChanged += OnGraphModelChanged;
+            graphView.viewTransformChanged = OnViewTransformChanged;
+            center.Add(graphView);
             graphPlaceholder = new Label();
             graphPlaceholder.AddToClassList("qe-graph-placeholder");
             center.Add(graphPlaceholder);
@@ -159,6 +168,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             library.Refresh();
             BindSession();
+            RestoreOrFrameView();
         }
 
         private void RestoreSessionAfterReload()
@@ -176,7 +186,9 @@ namespace Vokazhira.QuestEditor.Editor
         {
             session?.Dispose();
             session = next;
+            hasStoredView = false;
             BindSession();
+            RestoreOrFrameView();
         }
 
         private void BindSession()
@@ -188,6 +200,7 @@ namespace Vokazhira.QuestEditor.Editor
             }
 
             settingsPanel?.Bind(serializedGraph);
+            graphView?.SetGraph(HasOpenQuest ? session.Graph : null);
             library?.SetCurrent(HasOpenQuest ? session.AssetGuid : null);
             UpdateUnsavedState();
         }
@@ -215,9 +228,9 @@ namespace Vokazhira.QuestEditor.Editor
             toolbar.SetState(hasQuest ? session.Title : "Нет открытого задания", hasUnsavedChanges, hasQuest, settingsVisible);
             settingsPanel.style.display = hasQuest && settingsVisible ? DisplayStyle.Flex : DisplayStyle.None;
 
-            graphPlaceholder.text = hasQuest
-                ? $"Холст графа появится на этапе 3b.\nУзлов: {session.Graph.Nodes.Count}, связей: {session.Graph.Edges.Count}."
-                : "Выберите задание в библиотеке (двойной клик) или создайте новое кнопкой New.";
+            graphView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
+            graphPlaceholder.style.display = hasQuest ? DisplayStyle.None : DisplayStyle.Flex;
+            graphPlaceholder.text = "Выберите задание в библиотеке (двойной клик) или создайте новое кнопкой New.";
         }
 
         private void OnUndoRedoPerformed()
@@ -229,7 +242,38 @@ namespace Vokazhira.QuestEditor.Editor
 
             session.Graph.InvalidateNodeIndex();
             serializedGraph?.Update();
+            graphView?.Rebuild();
             UpdateUnsavedState();
+        }
+
+        private void OnGraphModelChanged()
+        {
+            serializedGraph?.Update();
+            UpdateUnsavedState();
+        }
+
+        private void OnViewTransformChanged(GraphView view)
+        {
+            hasStoredView = true;
+            viewPosition = view.viewTransform.position;
+            viewScale = view.viewTransform.scale;
+        }
+
+        private void RestoreOrFrameView()
+        {
+            if (graphView == null || !HasOpenQuest)
+            {
+                return;
+            }
+
+            if (hasStoredView)
+            {
+                graphView.UpdateViewTransform(viewPosition, viewScale);
+            }
+            else
+            {
+                graphView.schedule.Execute(() => graphView.FrameAll());
+            }
         }
 
         private void OnQuestAssetsChanged()

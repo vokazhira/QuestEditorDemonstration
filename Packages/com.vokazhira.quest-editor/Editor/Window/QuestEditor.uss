@@ -81,11 +81,10 @@
 
 .qe-center {
     flex-grow: 1;
-    align-items: center;
-    justify-content: center;
 }
 
 .qe-graph-placeholder {
+    flex-grow: 1;
     -unity-text-align: middle-center;
     white-space: normal;
     opacity: 0.6;
