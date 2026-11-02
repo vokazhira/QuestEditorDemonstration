@@ -10,5 +10,12 @@
   "dependencies": {
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.uielements": "1.0.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Basic Quest Example",
+      "description": "Демо: два задания (включая «Зачистку леса» из примера), база заданий, сцена с QuestManager, кнопками событий, наградами и Save/Load. Команда Tools → Quest Editor → Demo → Build Demo Assets пересоздаёт ассеты примера.",
+      "path": "Samples~/BasicQuestExample"
+    }
+  ]
 }
