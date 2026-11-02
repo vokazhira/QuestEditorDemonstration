@@ -91,7 +91,7 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(service.TryLoad(out var data, out var error), Is.False);
 
             Assert.That(data, Is.Null);
-            Assert.That(error, Does.Contain("повреждено"));
+            Assert.That(error, Does.Contain("corrupted"));
             Assert.That(File.ReadAllText(filePath + FileQuestSaveService.CorruptSuffix), Is.EqualTo(garbage));
         }
 
@@ -102,7 +102,7 @@ namespace Vokazhira.QuestEditor.Tests
             File.WriteAllText(filePath, "   ");
 
             Assert.That(service.TryLoad(out _, out var error), Is.False);
-            Assert.That(error, Does.Contain("пуст"));
+            Assert.That(error, Does.Contain("empty"));
             Assert.That(File.Exists(filePath + FileQuestSaveService.CorruptSuffix), Is.True);
         }
 

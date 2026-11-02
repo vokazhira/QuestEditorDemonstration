@@ -15,7 +15,7 @@ namespace Vokazhira.QuestEditor.Editor
             DrawDefaultInspector();
             EditorGUILayout.Space();
 
-            if (GUILayout.Button(new GUIContent("Собрать все задания проекта", "Заменить список всеми QuestGraphAsset из проекта")))
+            if (GUILayout.Button(new GUIContent("Collect All Project Quests", "Replace the list with every QuestGraphAsset in the project")))
             {
                 CollectAllQuests();
             }
@@ -32,7 +32,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (invalid > 0)
             {
-                EditorGUILayout.HelpBox($"Заданий с ошибками или пустых ссылок: {invalid}. Такие задания не будут запускаться в игре.", MessageType.Warning);
+                EditorGUILayout.HelpBox($"Quests with errors or empty references: {invalid}. They will not run in the game.", MessageType.Warning);
             }
         }
 

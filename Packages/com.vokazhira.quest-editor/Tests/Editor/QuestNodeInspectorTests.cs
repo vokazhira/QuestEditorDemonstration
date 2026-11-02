@@ -72,7 +72,7 @@ namespace Vokazhira.QuestEditor.Editor.Tests
 
             var node = (KillObjective)graph.FindNode(kill.Id);
             Assert.That(node.EnemyId, Is.EqualTo("orc"));
-            Assert.That(node.GetSummary(), Is.EqualTo("Убить orc ×10"));
+            Assert.That(node.GetSummary(), Is.EqualTo("Kill orc ×10"));
         }
 
         [Test]

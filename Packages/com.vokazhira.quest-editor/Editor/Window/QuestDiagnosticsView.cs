@@ -26,7 +26,7 @@ namespace Vokazhira.QuestEditor.Editor
             header.AddToClassList("qe-diagnostics__header");
             summary = new Label();
             summary.AddToClassList("qe-diagnostics__summary");
-            staleLabel = new Label("Граф изменён — результаты могли устареть. Нажмите Validate.");
+            staleLabel = new Label("The graph has changed; results may be outdated. Press Validate.");
             staleLabel.AddToClassList("qe-diagnostics__stale");
             header.Add(summary);
             header.Add(staleLabel);
@@ -54,7 +54,7 @@ namespace Vokazhira.QuestEditor.Editor
             hasResults = false;
             diagnostics.Clear();
             listView.RefreshItems();
-            summary.text = "Проверка ещё не запускалась.";
+            summary.text = "Validation has not run yet.";
             staleLabel.style.display = DisplayStyle.None;
         }
 
@@ -69,8 +69,8 @@ namespace Vokazhira.QuestEditor.Editor
             var errors = diagnostics.Count(d => d.Severity == QuestDiagnosticSeverity.Error);
             var warnings = diagnostics.Count(d => d.Severity == QuestDiagnosticSeverity.Warning);
             summary.text = errors == 0 && warnings == 0
-                ? "Ошибок и предупреждений нет."
-                : $"Ошибок: {errors}, предупреждений: {warnings}." + (errors > 0 ? " Задание нельзя запустить в игре." : string.Empty);
+                ? "No errors or warnings."
+                : $"Errors: {errors}, warnings: {warnings}." + (errors > 0 ? " The quest cannot run in the game." : string.Empty);
             summary.EnableInClassList("qe-diagnostics__summary--error", errors > 0);
             staleLabel.style.display = DisplayStyle.None;
         }
@@ -115,7 +115,7 @@ namespace Vokazhira.QuestEditor.Editor
             element.Q<Image>("icon").image = GetIcon(diagnostic.Severity);
             element.Q<Label>("code").text = diagnostic.Code;
             element.Q<Label>("message").text = diagnostic.Message;
-            element.tooltip = diagnostic.NodeId == null ? diagnostic.Message : diagnostic.Message + "\nКлик — перейти к узлу.";
+            element.tooltip = diagnostic.NodeId == null ? diagnostic.Message : diagnostic.Message + "\nClick to select the node.";
         }
 
         private void OnSelectionChanged(IEnumerable<object> selection)

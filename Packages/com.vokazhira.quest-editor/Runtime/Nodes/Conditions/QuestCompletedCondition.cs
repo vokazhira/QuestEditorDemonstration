@@ -4,10 +4,10 @@ using UnityEngine;
 namespace Vokazhira.QuestEditor
 {
     [Serializable]
-    [QuestNode("Условия/Задание выполнено", "#FB8C00")]
+    [QuestNode("Conditions/Quest Completed", "#FB8C00")]
     public sealed class QuestCompletedCondition : ConditionNodeData
     {
-        [SerializeField, Tooltip("questId задания, которое должно быть выполнено.")]
+        [SerializeField, Tooltip("questId of the quest that must be completed.")]
         private string questId = string.Empty;
 
         public string QuestId
@@ -27,13 +27,13 @@ namespace Vokazhira.QuestEditor
         {
             if (string.IsNullOrWhiteSpace(questId))
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан questId проверяемого задания.");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "The questId of the quest to check is empty.");
             }
         }
 
         public override string GetSummary()
         {
-            return string.IsNullOrEmpty(questId) ? "Задание ? выполнено?" : $"Задание «{questId}» выполнено?";
+            return string.IsNullOrEmpty(questId) ? "Quest ? completed?" : $"Quest '{questId}' completed?";
         }
     }
 }

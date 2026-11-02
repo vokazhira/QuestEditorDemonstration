@@ -21,31 +21,31 @@ namespace Vokazhira.QuestEditor
         {
             if (fromNode == null || toNode == null)
             {
-                reason = "Узел не найден.";
+                reason = "Node not found.";
                 return false;
             }
 
             if (fromPort == null || toPort == null)
             {
-                reason = "Порт не найден.";
+                reason = "Port not found.";
                 return false;
             }
 
             if (fromPort.Direction != QuestPortDirection.Output || toPort.Direction != QuestPortDirection.Input)
             {
-                reason = "Соединять можно только выход со входом.";
+                reason = "Only an output can be connected to an input.";
                 return false;
             }
 
             if (fromPort.Kind != toPort.Kind)
             {
-                reason = $"Нельзя соединить порт вида {fromPort.Kind} с портом вида {toPort.Kind}.";
+                reason = $"A {fromPort.Kind} port cannot be connected to a {toPort.Kind} port.";
                 return false;
             }
 
             if (ReferenceEquals(fromNode, toNode) || string.Equals(fromNode.Id, toNode.Id, StringComparison.Ordinal))
             {
-                reason = "Нельзя соединить узел сам с собой.";
+                reason = "A node cannot be connected to itself.";
                 return false;
             }
 
@@ -67,7 +67,7 @@ namespace Vokazhira.QuestEditor
         {
             if (graph == null)
             {
-                reason = "Граф не задан.";
+                reason = "No graph.";
                 return false;
             }
 
@@ -83,19 +83,19 @@ namespace Vokazhira.QuestEditor
 
             if (graph.HasEdge(fromNodeId, fromPortId, toNodeId, toPortId))
             {
-                reason = "Такая связь уже существует.";
+                reason = "This connection already exists.";
                 return false;
             }
 
             if (fromPort.Capacity == QuestPortCapacity.Single && graph.CountEdgesFrom(fromNodeId, fromPortId) > 0)
             {
-                reason = $"Выход «{fromPort.DisplayName}» уже подключён.";
+                reason = $"Output '{fromPort.DisplayName}' is already connected.";
                 return false;
             }
 
             if (toPort.Capacity == QuestPortCapacity.Single && graph.CountEdgesTo(toNodeId, toPortId) > 0)
             {
-                reason = $"Вход «{toPort.DisplayName}» уже подключён.";
+                reason = $"Input '{toPort.DisplayName}' is already connected.";
                 return false;
             }
 

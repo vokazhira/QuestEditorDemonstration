@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Vokazhira.QuestEditor
 {
     [Serializable]
-    [QuestNode("Цели/Убить врагов", "#E53935")]
+    [QuestNode("Objectives/Kill Enemies", "#E53935")]
     public sealed class KillObjective : ObjectiveNodeData
     {
-        [SerializeField, Tooltip("Идентификатор типа врага, например goblin.")]
+        [SerializeField, Tooltip("Enemy type identifier, for example goblin.")]
         private string enemyId = string.Empty;
 
-        [SerializeField, Min(1), Tooltip("Сколько врагов нужно убить.")]
+        [SerializeField, Min(1), Tooltip("How many enemies must be killed.")]
         private int requiredCount = 1;
 
         public string EnemyId
@@ -36,13 +36,13 @@ namespace Vokazhira.QuestEditor
             base.Validate(context);
             if (string.IsNullOrWhiteSpace(enemyId))
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан enemyId.");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "enemyId is empty.");
             }
         }
 
         public override string GetSummary()
         {
-            return $"Убить {QuestObjectiveMatching.Display(enemyId)} ×{requiredCount}";
+            return $"Kill {QuestObjectiveMatching.Display(enemyId)} ×{requiredCount}";
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Vokazhira.QuestEditor.Editor
     /// </summary>
     internal sealed class QuestNodeInspector : VisualElement
     {
-        private const string EmptySelectionText = "Выберите один узел, чтобы изменить его параметры.";
+        private const string EmptySelectionText = "Select a single node to edit its settings.";
 
         private readonly Label header;
         private readonly Label subHeader;
@@ -25,7 +25,7 @@ namespace Vokazhira.QuestEditor.Editor
         {
             AddToClassList("qe-inspector");
 
-            var title = new Label("Инспектор");
+            var title = new Label("Inspector");
             title.AddToClassList("qe-inspector__title");
             Add(title);
 
@@ -85,7 +85,7 @@ namespace Vokazhira.QuestEditor.Editor
             var properties = GetEditableProperties(serializedGraph, index);
             if (properties.Count == 0)
             {
-                fields.Add(new Label("У этого узла нет настраиваемых полей.") { name = "no-fields" });
+                fields.Add(new Label("This node has no editable fields.") { name = "no-fields" });
                 return;
             }
 

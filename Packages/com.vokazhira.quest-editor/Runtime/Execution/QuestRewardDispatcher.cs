@@ -30,7 +30,7 @@ namespace Vokazhira.QuestEditor
             var handler = FindHandler(reward.GetType());
             if (handler == null)
             {
-                error = $"Нет обработчика для награды типа {reward.GetType().Name}.";
+                error = $"No handler is registered for reward type {reward.GetType().Name}.";
                 return false;
             }
 
@@ -42,12 +42,12 @@ namespace Vokazhira.QuestEditor
                     return true;
                 }
 
-                error = $"Обработчик награды {reward.GetType().Name} вернул false.";
+                error = $"The handler for reward {reward.GetType().Name} returned false.";
                 return false;
             }
             catch (Exception exception)
             {
-                error = $"Обработчик награды {reward.GetType().Name} бросил исключение: {exception.Message}";
+                error = $"The handler for reward {reward.GetType().Name} threw an exception: {exception.Message}";
                 return false;
             }
         }

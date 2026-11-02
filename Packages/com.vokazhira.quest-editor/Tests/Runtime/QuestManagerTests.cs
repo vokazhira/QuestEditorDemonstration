@@ -120,13 +120,13 @@ namespace Vokazhira.QuestEditor.Tests
             var instance = manager.GetInstance("chain");
 
             manager.Report(QuestEvent.ItemCollected("herb"));
-            Assert.That(instance.GetProgress(collect.ObjectiveId), Is.EqualTo(0), "Вторая цель ещё не активна.");
+            Assert.That(instance.GetProgress(collect.ObjectiveId), Is.EqualTo(0), "The second objective is not active yet.");
 
             manager.Report(QuestEvent.EnemyKilled("goblin", 2));
             Assert.That(instance.CurrentObjective, Is.SameAs(collect));
 
             manager.Report(QuestEvent.EnemyKilled("goblin"));
-            Assert.That(instance.GetProgress(kill.ObjectiveId), Is.EqualTo(2), "Пройденная цель больше не получает прогресс.");
+            Assert.That(instance.GetProgress(kill.ObjectiveId), Is.EqualTo(2), "A finished objective no longer receives progress.");
 
             manager.Report(QuestEvent.ItemCollected("herb"));
             Assert.That(instance.State, Is.EqualTo(QuestState.Completed));
@@ -154,8 +154,8 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(experience.Experience, Is.EqualTo(25));
             Assert.That(log.Entries.GetRange(log.Entries.Count - 3, 3), Is.EqualTo(new[]
             {
-                "granted:forest_cleanup:+100 золота",
-                "granted:forest_cleanup:+25 опыта",
+                "granted:forest_cleanup:+100 gold",
+                "granted:forest_cleanup:+25 XP",
                 "completed:forest_cleanup"
             }));
         }
@@ -199,7 +199,7 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(manager.GetState("manual"), Is.EqualTo(QuestState.Completed));
             Assert.That(currency.Gold, Is.EqualTo(50));
             Assert.That(manager.GetInstance("manual").IsRewardGranted(gold.RewardId), Is.True);
-            Assert.That(manager.Claim("manual"), Is.False, "Повторный Claim ничего не делает.");
+            Assert.That(manager.Claim("manual"), Is.False, "A repeated Claim does nothing.");
             Assert.That(currency.Gold, Is.EqualTo(50));
         }
 
@@ -217,16 +217,16 @@ namespace Vokazhira.QuestEditor.Tests
 
             Assert.That(manager.GetState("partial"), Is.EqualTo(QuestState.Claimable));
             Assert.That(currency.Gold, Is.EqualTo(100));
-            Assert.That(log.Entries, Does.Contain("reward-failed:partial:+25 опыта"));
+            Assert.That(log.Entries, Does.Contain("reward-failed:partial:+25 XP"));
             Assert.That(log.Entries, Does.Contain("claimable:partial"));
 
-            Assert.That(manager.Claim("partial"), Is.False, "Обработчика опыта всё ещё нет.");
+            Assert.That(manager.Claim("partial"), Is.False, "There is still no experience handler.");
 
             manager.RegisterRewardHandler(new ExperienceRewardHandler(experience));
             Assert.That(manager.Claim("partial"), Is.True);
 
             Assert.That(manager.GetState("partial"), Is.EqualTo(QuestState.Completed));
-            Assert.That(currency.Gold, Is.EqualTo(100), "Уже выданное золото не выдаётся повторно.");
+            Assert.That(currency.Gold, Is.EqualTo(100), "Gold that was already granted is not granted again.");
             Assert.That(experience.Experience, Is.EqualTo(25));
         }
 
@@ -270,11 +270,11 @@ namespace Vokazhira.QuestEditor.Tests
             var broken = Linear("broken", QuestTestGraphs.Kill(string.Empty, 1));
             CreateManager(broken);
 
-            Assert.That(log.Contains(LogType.Error, "«broken» содержит ошибки"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Error, "'broken' has validation errors"), Is.True, log.ToString());
             Assert.That(manager.GetValidationErrors("broken"), Is.Not.Empty);
             Assert.That(manager.CanStart("broken"), Is.False);
             Assert.That(manager.Start("broken"), Is.False);
-            Assert.That(log.Contains(LogType.Warning, "«broken» нельзя запустить"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "'broken' cannot be started"), Is.True, log.ToString());
             Assert.That(manager.GetState("broken"), Is.EqualTo(QuestState.Available));
         }
 
@@ -306,8 +306,8 @@ namespace Vokazhira.QuestEditor.Tests
 
             Assert.That(manager.Start("hunt"), Is.False);
             Assert.That(manager.Start("missing"), Is.False);
-            Assert.That(log.Contains(LogType.Warning, "«hunt» нельзя запустить"), Is.True, log.ToString());
-            Assert.That(log.Contains(LogType.Warning, "«missing» нельзя запустить"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "'hunt' cannot be started"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "'missing' cannot be started"), Is.True, log.ToString());
             Assert.That(manager.GetState("missing"), Is.EqualTo(QuestState.Available));
             Assert.That(manager.GetInstance("missing"), Is.Null);
         }
@@ -318,7 +318,7 @@ namespace Vokazhira.QuestEditor.Tests
             CreateManager(Linear("hunt", QuestTestGraphs.Kill("goblin", 5)));
             var log = new QuestEventLog(manager);
 
-            Assert.That(manager.Abandon("hunt"), Is.False, "Нельзя прервать не начатое задание.");
+            Assert.That(manager.Abandon("hunt"), Is.False, "A quest that was not started cannot be abandoned.");
             manager.Start("hunt");
 
             Assert.That(manager.Abandon("hunt"), Is.True);

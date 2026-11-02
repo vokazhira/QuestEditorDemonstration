@@ -95,7 +95,7 @@ namespace Vokazhira.QuestEditor.Editor
         private void OnEnable()
         {
             titleContent = new GUIContent("Quest Editor");
-            saveChangesMessage = "В задании есть несохранённые изменения. Сохранить их перед закрытием?";
+            saveChangesMessage = "The quest has unsaved changes. Save them before closing?";
 
             RestoreSessionAfterReload();
 
@@ -275,14 +275,14 @@ namespace Vokazhira.QuestEditor.Editor
             }
 
             var hasQuest = HasOpenQuest;
-            toolbar.SetState(hasQuest ? session.Title : "Нет открытого задания", hasUnsavedChanges, hasQuest, settingsVisible);
+            toolbar.SetState(hasQuest ? session.Title : "No quest open", hasUnsavedChanges, hasQuest, settingsVisible);
             settingsPanel.style.display = hasQuest && settingsVisible ? DisplayStyle.Flex : DisplayStyle.None;
 
             graphView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             inspector.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             diagnosticsView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             graphPlaceholder.style.display = hasQuest ? DisplayStyle.None : DisplayStyle.Flex;
-            graphPlaceholder.text = "Выберите задание в библиотеке (двойной клик) или создайте новое кнопкой New.";
+            graphPlaceholder.text = "Double-click a quest in the library or create one with New.";
         }
 
         private void OnUndoRedoPerformed()
@@ -336,7 +336,7 @@ namespace Vokazhira.QuestEditor.Editor
                 graphView.SelectNode(nodeId);
                 if (removed > 0)
                 {
-                    ShowNotification(new GUIContent($"Удалено связей к исчезнувшим портам: {removed}."));
+                    ShowNotification(new GUIContent($"Removed connections to ports that no longer exist: {removed}."));
                 }
             }
 
@@ -375,7 +375,7 @@ namespace Vokazhira.QuestEditor.Editor
             {
                 session.DetachFromAsset();
                 library?.SetCurrent(null);
-                ShowNotification(new GUIContent("Файл задания удалён. Сохраните задание заново (Save As)."));
+                ShowNotification(new GUIContent("The quest file was deleted. Save the quest again with Save As."));
             }
 
             UpdateUnsavedState();
@@ -389,11 +389,11 @@ namespace Vokazhira.QuestEditor.Editor
             }
 
             var choice = EditorUtility.DisplayDialogComplex(
-                "Несохранённые изменения",
-                $"Сохранить изменения в задании «{session.Title}»?",
-                "Сохранить",
-                "Отмена",
-                "Не сохранять");
+                "Unsaved Changes",
+                $"Save changes to quest '{session.Title}'?",
+                "Save",
+                "Cancel",
+                "Don't Save");
 
             switch (choice)
             {
@@ -420,7 +420,7 @@ namespace Vokazhira.QuestEditor.Editor
 
         private void OpenQuestFromFile()
         {
-            var absolutePath = EditorUtility.OpenFilePanel("Открыть задание", Application.dataPath, "asset");
+            var absolutePath = EditorUtility.OpenFilePanel("Open Quest", Application.dataPath, "asset");
             if (string.IsNullOrEmpty(absolutePath))
             {
                 return;
@@ -430,7 +430,7 @@ namespace Vokazhira.QuestEditor.Editor
             var asset = string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<QuestGraphAsset>(path);
             if (asset == null)
             {
-                EditorUtility.DisplayDialog("Не удалось открыть", "Выбранный файл не является заданием (QuestGraphAsset) внутри проекта.", "OK");
+                EditorUtility.DisplayDialog("Cannot Open", "The selected file is not a quest (QuestGraphAsset) inside the project.", "OK");
                 return;
             }
 
@@ -451,17 +451,17 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (QuestEditorValidation.HasMissingTypes(session.LoadAsset())
                 && !EditorUtility.DisplayDialog(
-                    "Узлы с отсутствующими классами",
-                    "В ассете есть узлы, классы которых не найдены. При сохранении их данные будут потеряны. Сначала верните классы или добавьте [MovedFrom].\n\nВсё равно сохранить?",
-                    "Сохранить",
-                    "Отмена"))
+                    "Nodes With Missing Classes",
+                    "The asset contains nodes whose classes were not found. Saving will lose their data. Restore the classes or add [MovedFrom] first.\n\nSave anyway?",
+                    "Save",
+                    "Cancel"))
             {
                 return false;
             }
 
             if (!session.Save(out var error))
             {
-                EditorUtility.DisplayDialog("Не удалось сохранить", error, "OK");
+                EditorUtility.DisplayDialog("Cannot Save", error, "OK");
                 return false;
             }
 
@@ -476,7 +476,7 @@ namespace Vokazhira.QuestEditor.Editor
                 return false;
             }
 
-            var path = EditorUtility.SaveFilePanelInProject("Сохранить задание", session.Title, "asset", "Выберите, куда сохранить задание.");
+            var path = EditorUtility.SaveFilePanelInProject("Save Quest", session.Title, "asset", "Choose where to save the quest.");
             if (string.IsNullOrEmpty(path))
             {
                 return false;
@@ -486,7 +486,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (!session.SaveAs(path, out var error))
             {
-                EditorUtility.DisplayDialog("Не удалось сохранить", error, "OK");
+                EditorUtility.DisplayDialog("Cannot Save", error, "OK");
                 return false;
             }
 
@@ -506,7 +506,7 @@ namespace Vokazhira.QuestEditor.Editor
             Undo.RecordObject(graph, "Change Quest Id");
             graph.QuestId = uniqueId;
             serializedGraph?.Update();
-            ShowNotification(new GUIContent($"questId изменён на «{uniqueId}»: прежний уже занят."));
+            ShowNotification(new GUIContent($"questId changed to '{uniqueId}' because the previous one is already used."));
         }
 
         private void OnSaved()
@@ -521,13 +521,13 @@ namespace Vokazhira.QuestEditor.Editor
             var errorCount = diagnostics?.Count(d => d.Severity == QuestDiagnosticSeverity.Error) ?? 0;
             if (errorCount > 0)
             {
-                ShowNotification(new GUIContent($"Сохранено с ошибками ({errorCount}). Задание не будет запущено в игре."));
+                ShowNotification(new GUIContent($"Saved with {errorCount} error(s). The quest will not run in the game."));
             }
         }
 
         private void CreateQuestAsset()
         {
-            var path = EditorUtility.SaveFilePanelInProject("Создать задание", "NewQuest", "asset", "Выберите, где создать ассет задания.");
+            var path = EditorUtility.SaveFilePanelInProject("Create Quest", "NewQuest", "asset", "Choose where to create the quest asset.");
             if (string.IsNullOrEmpty(path))
             {
                 return;
@@ -535,7 +535,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (AssetDatabase.LoadMainAssetAtPath(path) != null)
             {
-                EditorUtility.DisplayDialog("Файл уже существует", "Выберите другое имя: создание не перезаписывает существующие ассеты.", "OK");
+                EditorUtility.DisplayDialog("File Already Exists", "Choose another name: Create never overwrites existing assets.", "OK");
                 return;
             }
 
@@ -555,7 +555,7 @@ namespace Vokazhira.QuestEditor.Editor
             var copy = QuestAssetUtility.DuplicateQuestAsset(source);
             if (copy == null)
             {
-                EditorUtility.DisplayDialog("Не удалось дублировать", $"Не удалось создать копию «{source.name}».", "OK");
+                EditorUtility.DisplayDialog("Cannot Duplicate", $"Could not duplicate '{source.name}'.", "OK");
                 return;
             }
 
@@ -567,13 +567,13 @@ namespace Vokazhira.QuestEditor.Editor
         {
             var guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset));
             var isOpen = HasOpenQuest && session.AssetGuid == guid;
-            var message = $"Удалить задание «{asset.name}»? Файл будет перемещён в корзину.";
+            var message = $"Delete quest '{asset.name}'? The file will be moved to the trash.";
             if (isOpen && session.RefreshUnsavedState())
             {
-                message += "\n\nЗадание открыто, несохранённые изменения будут потеряны.";
+                message += "\n\nThe quest is open; unsaved changes will be lost.";
             }
 
-            if (!EditorUtility.DisplayDialog("Удалить задание", message, "Удалить", "Отмена"))
+            if (!EditorUtility.DisplayDialog("Delete Quest", message, "Delete", "Cancel"))
             {
                 return;
             }
@@ -585,7 +585,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (!QuestAssetUtility.DeleteQuestAsset(asset))
             {
-                EditorUtility.DisplayDialog("Не удалось удалить", $"Не удалось удалить «{asset.name}».", "OK");
+                EditorUtility.DisplayDialog("Cannot Delete", $"Could not delete '{asset.name}'.", "OK");
             }
 
             library?.Refresh();

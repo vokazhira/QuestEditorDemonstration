@@ -31,7 +31,7 @@ namespace Vokazhira.QuestEditor
 
             if (start == null)
             {
-                error = "В графе нет узла Start.";
+                error = "The graph has no Start node.";
                 return QuestAdvanceOutcome.Broken;
             }
 
@@ -51,7 +51,7 @@ namespace Vokazhira.QuestEditor
                 switch (node)
                 {
                     case null:
-                        error = $"Узел «{instance.CurrentNodeId}» не найден в графе.";
+                        error = $"Node '{instance.CurrentNodeId}' was not found in the graph.";
                         return QuestAdvanceOutcome.Broken;
 
                     case EndNodeData end:
@@ -82,7 +82,7 @@ namespace Vokazhira.QuestEditor
                         }
                         catch (Exception exception)
                         {
-                            error = $"Условие «{condition.GetSummary()}» бросило исключение: {exception.Message}";
+                            error = $"Condition '{condition.GetSummary()}' threw an exception: {exception.Message}";
                             return QuestAdvanceOutcome.Broken;
                         }
 
@@ -102,12 +102,12 @@ namespace Vokazhira.QuestEditor
                         break;
 
                     default:
-                        error = $"Узел типа {node.GetType().Name} не может стоять в потоке задания.";
+                        error = $"A node of type {node.GetType().Name} cannot be part of the quest flow.";
                         return QuestAdvanceOutcome.Broken;
                 }
             }
 
-            error = $"Превышен лимит в {MaxStepsPerAdvance} переходов за один шаг — возможен цикл.";
+            error = $"Exceeded {MaxStepsPerAdvance} transitions in one step; the graph may contain a cycle.";
             return QuestAdvanceOutcome.Broken;
         }
 
@@ -149,7 +149,7 @@ namespace Vokazhira.QuestEditor
                 }
             }
 
-            error = $"Выход «{portId}» узла «{node.GetSummary()}» не подключён.";
+            error = $"Output '{portId}' of node '{node.GetSummary()}' is not connected.";
             return false;
         }
     }

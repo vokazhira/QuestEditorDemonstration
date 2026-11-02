@@ -33,7 +33,7 @@ namespace Vokazhira.QuestEditor.Tests
             {
                 Graph = ScriptableObject.CreateInstance<QuestGraphAsset>(),
                 Start = new StartNodeData(),
-                Kill = new KillObjective { EnemyId = "goblin", Title = "Гоблины", Description = "Убейте гоблинов в лесу" },
+                Kill = new KillObjective { EnemyId = "goblin", Title = "Goblins", Description = "Kill the goblins in the forest" },
                 Condition = new QuestCompletedCondition { QuestId = "intro" },
                 Completed = new EndNodeData { Result = QuestEndResult.Completed },
                 Failed = new EndNodeData { Result = QuestEndResult.Failed },
@@ -45,7 +45,7 @@ namespace Vokazhira.QuestEditor.Tests
             var graph = quest.Graph;
             graph.name = questId;
             graph.QuestId = questId;
-            graph.DisplayName = "Зачистка леса";
+            graph.DisplayName = "Forest Cleanup";
             graph.AddNode(quest.Start);
             graph.AddNode(quest.Kill);
             graph.AddNode(quest.Condition);
@@ -105,14 +105,14 @@ namespace Vokazhira.QuestEditor.Tests
 
         public static KillObjective Kill(string enemyId, int count)
         {
-            var objective = new KillObjective { EnemyId = enemyId, Description = "Убить " + enemyId };
+            var objective = new KillObjective { EnemyId = enemyId, Description = "Kill " + enemyId };
             objective.SetRequiredCount(count);
             return objective;
         }
 
         public static CollectObjective Collect(string itemId, int count)
         {
-            var objective = new CollectObjective { ItemId = itemId, Description = "Собрать " + itemId };
+            var objective = new CollectObjective { ItemId = itemId, Description = "Collect " + itemId };
             objective.SetRequiredCount(count);
             return objective;
         }

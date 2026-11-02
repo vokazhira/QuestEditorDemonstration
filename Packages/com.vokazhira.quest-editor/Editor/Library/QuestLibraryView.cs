@@ -26,13 +26,13 @@ namespace Vokazhira.QuestEditor.Editor
         {
             AddToClassList("qe-library");
 
-            var header = new Label("Задания");
+            var header = new Label("Quests");
             header.AddToClassList("qe-library__header");
             Add(header);
 
             searchField = new ToolbarSearchField();
             searchField.AddToClassList("qe-library__search");
-            searchField.tooltip = "Поиск по названию и questId";
+            searchField.tooltip = "Search by name or questId";
             searchField.RegisterValueChangedCallback(_ => ApplyFilter());
             Add(searchField);
 
@@ -51,10 +51,10 @@ namespace Vokazhira.QuestEditor.Editor
 
             var buttons = new VisualElement();
             buttons.AddToClassList("qe-library__buttons");
-            buttons.Add(new Button(Refresh) { text = "Обновить", tooltip = "Заново найти все задания проекта" });
-            buttons.Add(new Button(() => CreateRequested?.Invoke()) { text = "Создать", tooltip = "Создать новый ассет задания" });
-            duplicateButton = new Button(() => RaiseForSelection(DuplicateRequested)) { text = "Копия", tooltip = "Дублировать выбранное задание с новым questId" };
-            deleteButton = new Button(() => RaiseForSelection(DeleteRequested)) { text = "Удалить", tooltip = "Удалить выбранное задание (с подтверждением)" };
+            buttons.Add(new Button(Refresh) { text = "Refresh", tooltip = "Find all quests in the project again" });
+            buttons.Add(new Button(() => CreateRequested?.Invoke()) { text = "Create", tooltip = "Create a new quest asset" });
+            duplicateButton = new Button(() => RaiseForSelection(DuplicateRequested)) { text = "Duplicate", tooltip = "Duplicate the selected quest with a new questId" };
+            deleteButton = new Button(() => RaiseForSelection(DeleteRequested)) { text = "Delete", tooltip = "Delete the selected quest (asks for confirmation)" };
             buttons.Add(duplicateButton);
             buttons.Add(deleteButton);
             Add(buttons);
@@ -176,16 +176,16 @@ namespace Vokazhira.QuestEditor.Editor
             var icon = element.Q<Image>("error-icon");
             var hasError = quest != null && firstErrorByQuest.ContainsKey(quest);
             icon.style.visibility = hasError ? Visibility.Visible : Visibility.Hidden;
-            element.tooltip = hasError ? "Задание невалидно и не будет запущено в игре.\n" + firstErrorByQuest[quest] : null;
+            element.tooltip = hasError ? "This quest is invalid and will not run in the game.\n" + firstErrorByQuest[quest] : null;
             if (quest == null)
             {
-                title.text = "(отсутствует)";
+                title.text = "(missing)";
                 questId.text = string.Empty;
                 return;
             }
 
             title.text = string.IsNullOrEmpty(quest.DisplayName) ? quest.name : $"{quest.DisplayName}  ·  {quest.name}";
-            questId.text = string.IsNullOrEmpty(quest.QuestId) ? "questId не задан" : quest.QuestId;
+            questId.text = string.IsNullOrEmpty(quest.QuestId) ? "no questId" : quest.QuestId;
 
             var guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(quest));
             element.EnableInClassList("qe-library-item--current", !string.IsNullOrEmpty(currentGuid) && guid == currentGuid);

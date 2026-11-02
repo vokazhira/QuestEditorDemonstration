@@ -97,7 +97,7 @@ namespace Vokazhira.QuestEditor
             ThrowIfDisposed();
             if (!CanStart(questId, out var reason))
             {
-                logger.LogWarning(LogTag, $"Задание «{questId}» нельзя запустить: {reason}");
+                logger.LogWarning(LogTag, $"Quest '{questId}' cannot be started: {reason}");
                 return false;
             }
 
@@ -207,13 +207,13 @@ namespace Vokazhira.QuestEditor
             ThrowIfDisposed();
             if (data != null && data.saveVersion > QuestSaveData.CurrentVersion)
             {
-                logger.LogError(LogTag, $"Версия сохранения {data.saveVersion} новее поддерживаемой ({QuestSaveData.CurrentVersion}). Прогресс не загружен.");
+                logger.LogError(LogTag, $"Save version {data.saveVersion} is newer than the supported version {QuestSaveData.CurrentVersion}. Progress was not loaded.");
                 return false;
             }
 
             if (data != null && data.saveVersion < QuestSaveData.CurrentVersion)
             {
-                logger.LogWarning(LogTag, $"Версия сохранения {data.saveVersion} старше текущей ({QuestSaveData.CurrentVersion}); миграций нет, данные читаются как есть.");
+                logger.LogWarning(LogTag, $"Save version {data.saveVersion} is older than the current version {QuestSaveData.CurrentVersion}; no migrations exist, the data is read as is.");
             }
 
             foreach (var instance in instances)
@@ -243,7 +243,7 @@ namespace Vokazhira.QuestEditor
             ThrowIfDisposed();
             if (saveService == null)
             {
-                logger.LogError(LogTag, "Сохранение невозможно: менеджер создан без IQuestSaveService.");
+                logger.LogError(LogTag, "Cannot save: the manager was created without an IQuestSaveService.");
                 return false;
             }
 
@@ -268,7 +268,7 @@ namespace Vokazhira.QuestEditor
             ThrowIfDisposed();
             if (saveService == null)
             {
-                logger.LogError(LogTag, "Загрузка невозможна: менеджер создан без IQuestSaveService.");
+                logger.LogError(LogTag, "Cannot load: the manager was created without an IQuestSaveService.");
                 return false;
             }
 
@@ -278,7 +278,7 @@ namespace Vokazhira.QuestEditor
             {
                 if (!saveService.TryLoad(out data, out error))
                 {
-                    logger.LogError(LogTag, $"Прогресс заданий не загружен: {error}");
+                    logger.LogError(LogTag, $"Quest progress was not loaded: {error}");
                     return false;
                 }
             }
@@ -324,7 +324,7 @@ namespace Vokazhira.QuestEditor
             {
                 if (graph == null)
                 {
-                    logger.LogWarning(LogTag, $"В базе заданий есть пустая ссылка — пропущена.");
+                    logger.LogWarning(LogTag, "The quest database contains an empty reference; it was skipped.");
                     continue;
                 }
 
@@ -333,7 +333,7 @@ namespace Vokazhira.QuestEditor
                 {
                     if (!ReferenceEquals(instancesById[questId].Graph, graph))
                     {
-                        logger.LogError(LogTag, $"Задание «{graph.name}» не зарегистрировано: questId «{questId}» уже занят.");
+                        logger.LogError(LogTag, $"Quest '{graph.name}' was not registered: questId '{questId}' is already used.");
                     }
 
                     continue;
@@ -342,7 +342,7 @@ namespace Vokazhira.QuestEditor
                 var errors = QuestGraphValidator.Validate(graph, quests).FindAll(d => d.Severity == QuestDiagnosticSeverity.Error);
                 if (string.IsNullOrEmpty(questId))
                 {
-                    logger.LogError(LogTag, $"Задание «{graph.name}» не зарегистрировано: пустой questId.");
+                    logger.LogError(LogTag, $"Quest '{graph.name}' was not registered: questId is empty.");
                     continue;
                 }
 
@@ -353,7 +353,7 @@ namespace Vokazhira.QuestEditor
                 if (errors.Count > 0)
                 {
                     errorsById.Add(questId, errors);
-                    logger.LogError(LogTag, $"Задание «{questId}» содержит ошибки и не будет запускаться:\n{string.Join("\n", errors)}");
+                    logger.LogError(LogTag, $"Quest '{questId}' has validation errors and will not be started:\n{string.Join("\n", errors)}");
                 }
             }
         }
@@ -369,20 +369,20 @@ namespace Vokazhira.QuestEditor
             {
                 if (record == null || string.IsNullOrEmpty(record.questId))
                 {
-                    logger.LogWarning(LogTag, "В сохранении есть запись без questId — пропущена.");
+                    logger.LogWarning(LogTag, "The save contains a record without questId; it was skipped.");
                     continue;
                 }
 
                 if (!restoredIds.Add(record.questId))
                 {
-                    logger.LogWarning(LogTag, $"В сохранении несколько записей задания «{record.questId}» — используется первая.");
+                    logger.LogWarning(LogTag, $"The save contains several records for quest '{record.questId}'; the first one is used.");
                     continue;
                 }
 
                 if (!instancesById.TryGetValue(record.questId, out var instance))
                 {
                     orphanedRecords.Add(record.Clone());
-                    logger.LogWarning(LogTag, $"Задания «{record.questId}» нет в базе. Его прогресс сохранён и будет восстановлен, когда задание вернётся.");
+                    logger.LogWarning(LogTag, $"Quest '{record.questId}' is not in the database. Its progress is kept and will be restored when the quest is back.");
                     continue;
                 }
 
@@ -391,14 +391,14 @@ namespace Vokazhira.QuestEditor
                 if (applied && needsGraph && errorsById.ContainsKey(record.questId))
                 {
                     applied = false;
-                    problem = "граф задания содержит ошибки валидации";
+                    problem = "the quest graph has validation errors";
                 }
 
                 if (!applied)
                 {
                     instance.IsFrozen = true;
                     frozenRecords[record.questId] = record.Clone();
-                    logger.LogWarning(LogTag, $"Задание «{record.questId}» заморожено: {problem}. Оно не будет исполняться, запись сохранится без изменений.");
+                    logger.LogWarning(LogTag, $"Quest '{record.questId}' is frozen: {problem}. It will not run and its record will be saved unchanged.");
                 }
             }
         }
@@ -423,32 +423,32 @@ namespace Vokazhira.QuestEditor
         {
             if (disposed)
             {
-                reason = "менеджер уничтожен (Dispose).";
+                reason = "the manager has been disposed.";
                 return false;
             }
 
             var instance = GetInstance(questId);
             if (instance == null)
             {
-                reason = "задание не зарегистрировано в базе.";
+                reason = "the quest is not registered in the database.";
                 return false;
             }
 
             if (errorsById.ContainsKey(questId))
             {
-                reason = "граф задания содержит ошибки валидации.";
+                reason = "the quest graph has validation errors.";
                 return false;
             }
 
             if (instance.IsFrozen)
             {
-                reason = "задание заморожено после загрузки сохранения.";
+                reason = "the quest was frozen when the save was loaded.";
                 return false;
             }
 
             if (instance.State != QuestState.Available)
             {
-                reason = $"задание уже в состоянии {instance.State}.";
+                reason = $"the quest is already {instance.State}.";
                 return false;
             }
 
@@ -497,7 +497,7 @@ namespace Vokazhira.QuestEditor
                     return;
 
                 default:
-                    logger.LogError(LogTag, $"Задание «{instance.QuestId}» остановлено с ошибкой: {error}");
+                    logger.LogError(LogTag, $"Quest '{instance.QuestId}' stopped with an error: {error}");
                     instance.State = QuestState.Failed;
                     QuestFailed?.Invoke(instance);
                     return;
@@ -526,7 +526,7 @@ namespace Vokazhira.QuestEditor
                 else
                 {
                     allGranted = false;
-                    logger.LogWarning(LogTag, $"Задание «{instance.QuestId}»: награда «{reward.GetSummary()}» не выдана. {error}");
+                    logger.LogWarning(LogTag, $"Quest '{instance.QuestId}': reward '{reward.GetSummary()}' was not granted. {error}");
                     QuestRewardFailed?.Invoke(instance, reward, error);
                 }
             }
@@ -574,8 +574,8 @@ namespace Vokazhira.QuestEditor
             {
                 if (node is RewardNodeData reward && !rewardDispatcher.HasHandler(reward.GetType()))
                 {
-                    logger.LogWarning(LogTag, $"Задание «{instance.QuestId}»: нет обработчика для награды {reward.GetType().Name}. "
-                        + "Она не будет выдана, пока обработчик не зарегистрирован (задание останется Claimable).");
+                    logger.LogWarning(LogTag, $"Quest '{instance.QuestId}': no handler is registered for reward {reward.GetType().Name}. "
+                        + "It will not be granted until a handler is registered (the quest stays Claimable).");
                 }
             }
         }

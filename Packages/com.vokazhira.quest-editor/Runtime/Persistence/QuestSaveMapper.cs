@@ -63,7 +63,7 @@ namespace Vokazhira.QuestEditor
 
             if (!Enum.TryParse(record.state, false, out QuestState state) || !Enum.IsDefined(typeof(QuestState), state))
             {
-                problem = $"неизвестное состояние «{record.state}»";
+                problem = $"unknown state '{record.state}'";
                 return false;
             }
 
@@ -71,11 +71,11 @@ namespace Vokazhira.QuestEditor
             switch (state)
             {
                 case QuestState.Active when !(instance.CurrentNode is ObjectiveNodeData):
-                    problem = $"сохранённый узел «{record.currentNodeId}» не найден в графе или не является целью";
+                    problem = $"saved node '{record.currentNodeId}' is missing from the graph or is not an objective";
                     return false;
 
                 case QuestState.Claimable when !(instance.CurrentNode is EndNodeData end && end.Result == QuestEndResult.Completed):
-                    problem = $"сохранённый узел «{record.currentNodeId}» не найден в графе или не является End(Completed)";
+                    problem = $"saved node '{record.currentNodeId}' is missing from the graph or is not End(Completed)";
                     return false;
 
                 default:

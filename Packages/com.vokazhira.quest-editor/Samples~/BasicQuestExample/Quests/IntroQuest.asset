@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: IntroQuest
   m_EditorClassIdentifier: 
   questId: intro
-  displayName: "\u041F\u0438\u0441\u044C\u043C\u043E \u0441\u0442\u0430\u0440\u043E\u0441\u0442\u044B"
-  description: "\u041D\u0430\u0439\u0434\u0438\u0442\u0435 \u043F\u0438\u0441\u044C\u043C\u043E
-    \u0441\u0442\u0430\u0440\u043E\u0441\u0442\u044B \u0434\u0435\u0440\u0435\u0432\u043D\u0438."
+  displayName: The Elder's Letter
+  description: Find the letter from the village elder.
   formatVersion: 1
   rewardMode: 0
   nodes:
@@ -50,9 +49,8 @@ MonoBehaviour:
         id: 5ff68d2a52574e339655bf8af4b8f30c
         position: {x: 220, y: 0}
         objectiveId: 0fa23c122e304437b410e64e5726cab1
-        title: "\u041D\u0430\u0439\u0442\u0438 \u043F\u0438\u0441\u044C\u043C\u043E"
-        description: "\u041F\u0438\u0441\u044C\u043C\u043E \u0433\u0434\u0435-\u0442\u043E
-          \u0432 \u0434\u0435\u0440\u0435\u0432\u043D\u0435."
+        title: Find the letter
+        description: The letter is somewhere in the village.
         isOptional: 0
         itemId: letter
         requiredCount: 1

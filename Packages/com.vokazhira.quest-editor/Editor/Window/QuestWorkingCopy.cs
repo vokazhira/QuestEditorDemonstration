@@ -13,7 +13,7 @@ namespace Vokazhira.QuestEditor.Editor
     [Serializable]
     internal sealed class QuestWorkingCopy
     {
-        public const string DraftName = "Новое задание";
+        public const string DraftName = "New Quest";
 
         [SerializeField] private string assetGuid;
         [SerializeField] private QuestGraphAsset graph;
@@ -117,7 +117,7 @@ namespace Vokazhira.QuestEditor.Editor
             var asset = LoadAsset();
             if (asset == null)
             {
-                error = "Ассет задания не найден. Используйте «Сохранить как».";
+                error = "The quest asset was not found. Use Save As.";
                 return false;
             }
 
@@ -130,13 +130,13 @@ namespace Vokazhira.QuestEditor.Editor
         {
             if (graph == null)
             {
-                error = "Нет открытого задания.";
+                error = "No quest is open.";
                 return false;
             }
 
             if (string.IsNullOrEmpty(path) || !path.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
             {
-                error = "Путь должен указывать на файл .asset внутри проекта.";
+                error = "The path must point to an .asset file inside the project.";
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace Vokazhira.QuestEditor.Editor
             }
             else
             {
-                error = "По этому пути уже лежит ассет другого типа.";
+                error = "An asset of another type already exists at this path.";
                 return false;
             }
 

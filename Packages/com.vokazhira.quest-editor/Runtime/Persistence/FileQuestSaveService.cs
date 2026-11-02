@@ -49,7 +49,7 @@ namespace Vokazhira.QuestEditor
             catch (Exception exception)
             {
                 data = null;
-                error = $"Не удалось прочитать «{FilePath}»: {exception.Message}";
+                error = $"Could not read '{FilePath}': {exception.Message}";
                 return false;
             }
 
@@ -57,7 +57,7 @@ namespace Vokazhira.QuestEditor
             string parseError = null;
             if (string.IsNullOrWhiteSpace(json))
             {
-                parseError = "файл пуст";
+                parseError = "the file is empty";
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Vokazhira.QuestEditor
                     parsed = JsonUtility.FromJson<QuestSaveData>(json);
                     if (parsed == null)
                     {
-                        parseError = "JSON не содержит данных сохранения";
+                        parseError = "the JSON contains no save data";
                     }
                 }
                 catch (Exception exception)
@@ -78,7 +78,7 @@ namespace Vokazhira.QuestEditor
             if (parsed == null)
             {
                 data = null;
-                error = $"Сохранение «{FilePath}» повреждено ({parseError}). {BackupCorruptFile()}";
+                error = $"Save file '{FilePath}' is corrupted ({parseError}). {BackupCorruptFile()}";
                 return false;
             }
 
@@ -131,11 +131,11 @@ namespace Vokazhira.QuestEditor
             try
             {
                 File.Copy(FilePath, corruptPath, true);
-                return $"Копия сохранена в «{corruptPath}».";
+                return $"A copy was saved to '{corruptPath}'.";
             }
             catch (Exception exception)
             {
-                return $"Не удалось сохранить копию: {exception.Message}";
+                return $"Could not save a copy: {exception.Message}";
             }
         }
     }

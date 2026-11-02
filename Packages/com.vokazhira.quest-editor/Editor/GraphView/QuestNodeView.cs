@@ -37,7 +37,7 @@ namespace Vokazhira.QuestEditor.Editor
                     typeof(QuestNodeData));
                 port.portName = definition.DisplayName;
                 port.userData = definition.PortId;
-                port.tooltip = definition.Kind == QuestPortKind.Reward ? "Награда" : "Поток";
+                port.tooltip = definition.Kind == QuestPortKind.Reward ? "Reward" : "Flow";
                 if (definition.Kind == QuestPortKind.Reward)
                 {
                     port.portColor = RewardPortColor;

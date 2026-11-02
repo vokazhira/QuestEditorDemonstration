@@ -19,7 +19,7 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             var root = FindDemoRoot();
             if (root == null)
             {
-                EditorUtility.DisplayDialog("Quest Editor Demo", "Не удалось найти папку демо.", "OK");
+                EditorUtility.DisplayDialog("Quest Editor Demo", "Could not find the demo folder.", "OK");
                 return;
             }
 
@@ -32,9 +32,9 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             var exists = File.Exists(introPath) || File.Exists(forestPath) || File.Exists(databasePath) || File.Exists(scenePath);
             if (exists && !EditorUtility.DisplayDialog(
                     "Quest Editor Demo",
-                    $"Ассеты демо в «{root}» уже существуют. Пересоздать их? Изменения в них будут потеряны.",
-                    "Пересоздать",
-                    "Отмена"))
+                    $"Demo assets already exist in '{root}'. Rebuild them? Changes made to them will be lost.",
+                    "Rebuild",
+                    "Cancel"))
             {
                 return;
             }
@@ -67,7 +67,7 @@ namespace Vokazhira.QuestEditor.Demo.Editor
 
             AssetDatabase.Refresh();
 
-            EditorUtility.DisplayDialog("Quest Editor Demo", $"Демо создано в «{root}». Откройте сцену QuestDemo и нажмите Play.", "OK");
+            EditorUtility.DisplayDialog("Quest Editor Demo", $"The demo was built in '{root}'. Open the QuestDemo scene and press Play.", "OK");
         }
 
         /// <summary>
@@ -77,16 +77,16 @@ namespace Vokazhira.QuestEditor.Demo.Editor
         {
             var graph = ScriptableObject.CreateInstance<QuestGraphAsset>();
             graph.QuestId = "intro";
-            graph.DisplayName = "Письмо старосты";
-            graph.Description = "Найдите письмо старосты деревни.";
+            graph.DisplayName = "The Elder's Letter";
+            graph.Description = "Find the letter from the village elder.";
             graph.RewardMode = QuestRewardMode.AutoGrant;
 
             var start = new StartNodeData { Position = new Vector2(0, 0) };
             var letter = new CollectObjective
             {
                 ItemId = "letter",
-                Title = "Найти письмо",
-                Description = "Письмо где-то в деревне.",
+                Title = "Find the letter",
+                Description = "The letter is somewhere in the village.",
                 Position = new Vector2(220, 0)
             };
             letter.SetRequiredCount(1);
@@ -111,16 +111,16 @@ namespace Vokazhira.QuestEditor.Demo.Editor
         {
             var graph = ScriptableObject.CreateInstance<QuestGraphAsset>();
             graph.QuestId = "forest_cleanup";
-            graph.DisplayName = "Зачистка леса";
-            graph.Description = "Перебейте гоблинов в лесу. Староста заплатит, только если вы уже прочли его письмо.";
+            graph.DisplayName = "Forest Cleanup";
+            graph.Description = "Clear the goblins out of the forest. The elder pays only if you have already read his letter.";
             graph.RewardMode = QuestRewardMode.ManualClaim;
 
             var start = new StartNodeData { Position = new Vector2(0, 100) };
             var kill = new KillObjective
             {
                 EnemyId = "goblin",
-                Title = "Убить гоблинов",
-                Description = "Гоблины засели в лесу.",
+                Title = "Kill goblins",
+                Description = "Goblins have settled in the forest.",
                 Position = new Vector2(220, 100)
             };
             kill.SetRequiredCount(10);
@@ -156,7 +156,7 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             var database = AssetDatabase.LoadAssetAtPath<QuestDatabase>(databasePath);
             if (database == null)
             {
-                Debug.LogError($"Quest Editor Demo: база заданий не найдена по пути «{databasePath}».");
+                Debug.LogError($"Quest Editor Demo: quest database not found at '{databasePath}'.");
                 return false;
             }
 
@@ -204,7 +204,7 @@ namespace Vokazhira.QuestEditor.Demo.Editor
         {
             if (!graph.TryConnect(from.Id, fromPort, to.Id, toPort, out var reason))
             {
-                Debug.LogError($"Quest Editor Demo: не удалось соединить узлы: {reason}");
+                Debug.LogError($"Quest Editor Demo: could not connect nodes: {reason}");
             }
         }
 

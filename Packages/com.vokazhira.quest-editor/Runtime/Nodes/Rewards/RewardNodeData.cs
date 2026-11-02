@@ -13,10 +13,10 @@ namespace Vokazhira.QuestEditor
     {
         private static readonly IReadOnlyList<QuestPortDefinition> PortList = Array.AsReadOnly(new[]
         {
-            new QuestPortDefinition(QuestPortIds.Reward, QuestPortDirection.Output, QuestPortKind.Reward, QuestPortCapacity.Single, "Награда")
+            new QuestPortDefinition(QuestPortIds.Reward, QuestPortDirection.Output, QuestPortKind.Reward, QuestPortCapacity.Single, "Reward")
         });
 
-        [SerializeField, Tooltip("Стабильный идентификатор награды. По нему отслеживается, что награда уже выдана.")]
+        [SerializeField, Tooltip("Stable reward identifier. Used to track that the reward has already been granted.")]
         private string rewardId;
 
         protected RewardNodeData()
@@ -36,7 +36,7 @@ namespace Vokazhira.QuestEditor
         {
             if (string.IsNullOrWhiteSpace(rewardId))
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан RewardId.");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "RewardId is empty.");
             }
         }
     }

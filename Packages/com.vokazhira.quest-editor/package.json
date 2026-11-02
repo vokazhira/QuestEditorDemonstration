@@ -2,7 +2,7 @@
   "name": "com.vokazhira.quest-editor",
   "version": "0.1.0",
   "displayName": "Quest Editor",
-  "description": "Визуальный редактор заданий на графе и runtime-система их исполнения.",
+  "description": "Visual graph-based quest editor and a runtime system that executes the quests.",
   "unity": "2023.1",
   "author": {
     "name": "vokazhira"
@@ -14,7 +14,7 @@
   "samples": [
     {
       "displayName": "Basic Quest Example",
-      "description": "Демо: два задания (включая «Зачистку леса» из примера), база заданий, сцена с QuestManager, кнопками событий, наградами и Save/Load. Команда Tools → Quest Editor → Demo → Build Demo Assets пересоздаёт ассеты примера.",
+      "description": "Demo: two quests (including the \"Forest Cleanup\" example), a quest database and a scene with a QuestManager, event buttons, rewards and Save/Load. Tools > Quest Editor > Demo > Build Demo Assets rebuilds the sample assets.",
       "path": "Samples~/BasicQuestExample"
     }
   ]

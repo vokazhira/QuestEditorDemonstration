@@ -330,7 +330,7 @@ namespace Vokazhira.QuestEditor.Editor
                 elementsToRemove.Remove(keep);
                 removedViews.Remove(keep);
                 elementsToRemove.RemoveAll(e => e is Edge edge && (edge.input?.node == keep || edge.output?.node == keep));
-                window.ShowNotification(new GUIContent("Нельзя удалить единственный узел Start."));
+                window.ShowNotification(new GUIContent("The only Start node cannot be deleted."));
             }
 
             var removedIds = new HashSet<string>(removedViews.Select(v => v.NodeId));
@@ -362,7 +362,7 @@ namespace Vokazhira.QuestEditor.Editor
             {
                 if (!TryGetEdgeData(edge.output, edge.input, out var data))
                 {
-                    rejection = "Порт не найден.";
+                    rejection = "Port not found.";
                     return true;
                 }
 
@@ -379,7 +379,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             if (rejection != null)
             {
-                window.ShowNotification(new GUIContent("Связь отклонена: " + rejection));
+                window.ShowNotification(new GUIContent("Connection rejected: " + rejection));
             }
 
             return changed;

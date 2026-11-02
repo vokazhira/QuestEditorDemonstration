@@ -15,9 +15,9 @@ namespace Vokazhira.QuestEditor.Editor
         {
             AddToClassList("qe-settings");
             AddField("questId", "Quest Id");
-            AddField("displayName", "Название");
-            AddField("description", "Описание");
-            AddField("rewardMode", "Выдача наград");
+            AddField("displayName", "Display Name");
+            AddField("description", "Description");
+            AddField("rewardMode", "Reward Mode");
         }
 
         public event Action Changed;

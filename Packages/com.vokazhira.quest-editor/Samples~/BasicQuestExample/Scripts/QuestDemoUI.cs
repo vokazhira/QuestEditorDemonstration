@@ -11,7 +11,7 @@ namespace Vokazhira.QuestEditor.Demo
     {
         private const int MaxMessages = 8;
 
-        [SerializeField, Tooltip("Bootstrap, создающий QuestManager.")]
+        [SerializeField, Tooltip("Bootstrap that creates the QuestManager.")]
         private QuestDemoBootstrap bootstrap;
 
         private readonly List<string> messages = new List<string>();
@@ -22,18 +22,18 @@ namespace Vokazhira.QuestEditor.Demo
         {
             if (bootstrap == null || bootstrap.Manager == null)
             {
-                Debug.LogError("QuestDemoUI: не назначен bootstrap или менеджер не создан.", this);
+                Debug.LogError("QuestDemoUI: no bootstrap is assigned or the manager was not created.", this);
                 enabled = false;
                 return;
             }
 
             subscribedManager = bootstrap.Manager;
-            subscribedManager.QuestStarted += q => AddMessage($"Задание начато: {Title(q)}");
-            subscribedManager.QuestClaimable += q => AddMessage($"Можно забрать награду: {Title(q)}");
-            subscribedManager.QuestCompleted += q => AddMessage($"Задание выполнено: {Title(q)}");
-            subscribedManager.QuestFailed += q => AddMessage($"Задание провалено: {Title(q)}");
-            subscribedManager.QuestRewardGranted += (q, r) => AddMessage($"Награда: {r.GetSummary()}");
-            subscribedManager.QuestRewardFailed += (q, r, reason) => AddMessage($"Награда не выдана: {r.GetSummary()} ({reason})");
+            subscribedManager.QuestStarted += q => AddMessage($"Quest started: {Title(q)}");
+            subscribedManager.QuestClaimable += q => AddMessage($"Reward ready to claim: {Title(q)}");
+            subscribedManager.QuestCompleted += q => AddMessage($"Quest completed: {Title(q)}");
+            subscribedManager.QuestFailed += q => AddMessage($"Quest failed: {Title(q)}");
+            subscribedManager.QuestRewardGranted += (q, r) => AddMessage($"Reward: {r.GetSummary()}");
+            subscribedManager.QuestRewardFailed += (q, r, reason) => AddMessage($"Reward not granted: {r.GetSummary()} ({reason})");
         }
 
         private void OnGUI()
@@ -47,17 +47,17 @@ namespace Vokazhira.QuestEditor.Demo
             GUILayout.BeginArea(new Rect(10, 10, Mathf.Min(520, Screen.width - 20), Screen.height - 20), GUI.skin.box);
             scroll = GUILayout.BeginScrollView(scroll);
 
-            GUILayout.Label($"Золото: {bootstrap.Currency.Gold}    Опыт: {bootstrap.Experience.Experience}");
+            GUILayout.Label($"Gold: {bootstrap.Currency.Gold}    XP: {bootstrap.Experience.Experience}");
 
             GUILayout.Space(6);
-            GUILayout.Label("Действия игрока");
+            GUILayout.Label("Player actions");
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Убить гоблина"))
+            if (GUILayout.Button("Kill goblin"))
             {
                 manager.Report(QuestEvent.EnemyKilled("goblin"));
             }
 
-            if (GUILayout.Button("Найти письмо"))
+            if (GUILayout.Button("Find letter"))
             {
                 manager.Report(QuestEvent.ItemCollected("letter"));
             }
@@ -65,7 +65,7 @@ namespace Vokazhira.QuestEditor.Demo
             GUILayout.EndHorizontal();
 
             GUILayout.Space(6);
-            GUILayout.Label("Задания");
+            GUILayout.Label("Quests");
             foreach (var quest in manager.GetInstances())
             {
                 DrawQuest(manager, quest);
@@ -75,25 +75,25 @@ namespace Vokazhira.QuestEditor.Demo
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save"))
             {
-                AddMessage(manager.Save() ? "Прогресс сохранён." : "Не удалось сохранить прогресс (см. Console).");
+                AddMessage(manager.Save() ? "Progress saved." : "Could not save progress (see Console).");
             }
 
             if (GUILayout.Button("Load"))
             {
-                AddMessage(manager.Load() ? "Прогресс загружен." : "Не удалось загрузить прогресс (см. Console).");
+                AddMessage(manager.Load() ? "Progress loaded." : "Could not load progress (see Console).");
             }
 
-            if (GUILayout.Button("Сбросить прогресс"))
+            if (GUILayout.Button("Reset progress"))
             {
                 manager.Restore(new QuestSaveData());
-                AddMessage("Прогресс сброшен (файл не изменён — нажмите Save, чтобы перезаписать).");
+                AddMessage("Progress reset (the file is unchanged; press Save to overwrite it).");
             }
 
             GUILayout.EndHorizontal();
-            GUILayout.Label($"Файл: {bootstrap.SaveService.FilePath}");
+            GUILayout.Label($"File: {bootstrap.SaveService.FilePath}");
 
             GUILayout.Space(6);
-            GUILayout.Label("Сообщения");
+            GUILayout.Label("Messages");
             foreach (var message in messages)
             {
                 GUILayout.Label("• " + message);
@@ -106,33 +106,33 @@ namespace Vokazhira.QuestEditor.Demo
         private void DrawQuest(QuestManager manager, QuestInstance quest)
         {
             GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label($"{Title(quest)} — {quest.State}{(quest.IsFrozen ? " (заморожено)" : string.Empty)}");
+            GUILayout.Label($"{Title(quest)} — {quest.State}{(quest.IsFrozen ? " (frozen)" : string.Empty)}");
 
             var objective = quest.CurrentObjective;
             if (objective != null)
             {
                 var name = string.IsNullOrEmpty(objective.Title) ? objective.GetSummary() : objective.Title;
-                GUILayout.Label($"Цель: {name} — {quest.GetProgress(objective.ObjectiveId)}/{objective.RequiredCount}");
+                GUILayout.Label($"Objective: {name} — {quest.GetProgress(objective.ObjectiveId)}/{objective.RequiredCount}");
             }
 
             var errors = manager.GetValidationErrors(quest.QuestId);
             if (errors.Count > 0)
             {
-                GUILayout.Label($"Задание невалидно: {errors[0].Message}");
+                GUILayout.Label($"Quest is invalid: {errors[0].Message}");
             }
 
             GUILayout.BeginHorizontal();
-            if (manager.CanStart(quest.QuestId) && GUILayout.Button("Начать"))
+            if (manager.CanStart(quest.QuestId) && GUILayout.Button("Start"))
             {
                 manager.Start(quest.QuestId);
             }
 
-            if (quest.State == QuestState.Claimable && GUILayout.Button("Забрать награду"))
+            if (quest.State == QuestState.Claimable && GUILayout.Button("Claim reward"))
             {
                 manager.Claim(quest.QuestId);
             }
 
-            if (quest.State == QuestState.Active && !quest.IsFrozen && GUILayout.Button("Отказаться"))
+            if (quest.State == QuestState.Active && !quest.IsFrozen && GUILayout.Button("Abandon"))
             {
                 manager.Abandon(quest.QuestId);
             }

@@ -35,8 +35,8 @@ namespace Vokazhira.QuestEditor.Editor.Tests
         {
             var info = QuestNodeTypeCache.GetInfo(typeof(KillObjective));
 
-            Assert.That(info.MenuPath, Is.EqualTo("Цели/Убить врагов"));
-            Assert.That(info.DisplayName, Is.EqualTo("Убить врагов"));
+            Assert.That(info.MenuPath, Is.EqualTo("Objectives/Kill Enemies"));
+            Assert.That(info.DisplayName, Is.EqualTo("Kill Enemies"));
             Assert.That(info.Color, Is.Not.EqualTo(QuestNodeTypeInfo.DefaultColor));
         }
 
@@ -56,7 +56,7 @@ namespace Vokazhira.QuestEditor.Editor.Tests
             var actual = tree.Select(e => $"{e.level}:{(e is SearchTreeGroupEntry ? "G" : "E")}:{e.name}").ToArray();
             Assert.That(actual, Is.EqualTo(new[]
             {
-                "0:G:Создать узел",
+                "0:G:Create Node",
                 "1:G:A",
                 "2:E:X",
                 "2:E:Y",

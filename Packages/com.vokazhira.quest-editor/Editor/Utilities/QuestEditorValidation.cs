@@ -48,7 +48,7 @@ namespace Vokazhira.QuestEditor.Editor
                 diagnostics.Insert(0, new QuestDiagnostic(
                     QuestDiagnosticSeverity.Error,
                     QuestDiagnosticCodes.MissingNodeType,
-                    $"Класс узла не найден: {typeName} (сборка {missing.assemblyName}). Верните класс или добавьте [MovedFrom]."));
+                    $"Node class not found: {typeName} (assembly {missing.assemblyName}). Restore the class or add [MovedFrom]."));
             }
         }
     }

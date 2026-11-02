@@ -76,7 +76,7 @@ namespace Vokazhira.QuestEditor
         {
             if (string.IsNullOrWhiteSpace(graph.QuestId))
             {
-                diagnostics.Add(Error(QuestDiagnosticCodes.EmptyQuestId, "Не задан questId задания."));
+                diagnostics.Add(Error(QuestDiagnosticCodes.EmptyQuestId, "The quest has no questId."));
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace Vokazhira.QuestEditor
             {
                 if (other != null && !ReferenceEquals(other, graph) && string.Equals(other.QuestId, graph.QuestId, StringComparison.Ordinal))
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateQuestId, $"questId «{graph.QuestId}» уже используется заданием «{other.name}»."));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateQuestId, $"questId '{graph.QuestId}' is already used by quest '{other.name}'."));
                 }
             }
         }
@@ -107,14 +107,14 @@ namespace Vokazhira.QuestEditor
                 {
                     diagnostics.Add(Error(
                         QuestDiagnosticCodes.MissingNodeType,
-                        $"Узел №{i + 1}: тип узла не найден (класс удалён или переименован без [MovedFrom])."));
+                        $"Node #{i + 1}: node type not found (the class was deleted or renamed without [MovedFrom])."));
                     continue;
                 }
 
                 nodes.Add(node);
                 if (string.IsNullOrEmpty(node.Id))
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.InvalidValue, "У узла пустой Id.", null));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.InvalidValue, "A node has an empty Id.", null));
                     continue;
                 }
 
@@ -122,7 +122,7 @@ namespace Vokazhira.QuestEditor
                 {
                     if (reportedDuplicates.Add(node.Id))
                     {
-                        diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateNodeId, $"Id узла «{node.Id}» встречается несколько раз.", node.Id));
+                        diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateNodeId, $"Node Id '{node.Id}' is used more than once.", node.Id));
                     }
 
                     continue;
@@ -139,19 +139,19 @@ namespace Vokazhira.QuestEditor
             var starts = nodes.FindAll(n => n is StartNodeData);
             if (starts.Count == 0)
             {
-                diagnostics.Add(Error(QuestDiagnosticCodes.MissingStart, "В графе нет узла Start."));
+                diagnostics.Add(Error(QuestDiagnosticCodes.MissingStart, "The graph has no Start node."));
             }
             else if (starts.Count > 1)
             {
                 foreach (var start in starts)
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.MultipleStarts, $"Узлов Start: {starts.Count}, должен быть ровно один.", start.Id));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.MultipleStarts, $"The graph has {starts.Count} Start nodes; exactly one is required.", start.Id));
                 }
             }
 
             if (!nodes.Exists(n => n is EndNodeData))
             {
-                diagnostics.Add(Error(QuestDiagnosticCodes.MissingEnd, "В графе нет ни одного узла End."));
+                diagnostics.Add(Error(QuestDiagnosticCodes.MissingEnd, "The graph has no End node."));
             }
         }
 
@@ -183,7 +183,7 @@ namespace Vokazhira.QuestEditor
         {
             if (owners.TryGetValue(id, out var first))
             {
-                diagnostics.Add(Error(code, $"{label} «{id}» уже используется узлом «{first.GetSummary()}».", node.Id));
+                diagnostics.Add(Error(code, $"{label} '{id}' is already used by node '{first.GetSummary()}'.", node.Id));
             }
             else
             {
@@ -205,7 +205,7 @@ namespace Vokazhira.QuestEditor
                 {
                     diagnostics.Add(Error(
                         QuestDiagnosticCodes.NodeValidationFailed,
-                        $"Проверка узла {node.GetType().Name} завершилась исключением: {exception.Message}",
+                        $"Validation of node {node.GetType().Name} threw an exception: {exception.Message}",
                         node.Id));
                 }
             }
@@ -229,7 +229,7 @@ namespace Vokazhira.QuestEditor
                 {
                     diagnostics.Add(Error(
                         QuestDiagnosticCodes.EdgeMissingNode,
-                        $"Связь {edge} ссылается на несуществующий узел.",
+                        $"Connection {edge} refers to a missing node.",
                         from?.Id ?? to?.Id));
                     continue;
                 }
@@ -238,14 +238,14 @@ namespace Vokazhira.QuestEditor
                 var toPort = to.FindPort(edge.ToPortId);
                 if (fromPort == null || toPort == null)
                 {
-                    var missing = fromPort == null ? $"«{edge.FromPortId}» у «{from.GetSummary()}»" : $"«{edge.ToPortId}» у «{to.GetSummary()}»";
-                    diagnostics.Add(Error(QuestDiagnosticCodes.EdgeMissingPort, $"Связь ссылается на несуществующий порт {missing}.", fromPort == null ? from.Id : to.Id));
+                    var missing = fromPort == null ? $"'{edge.FromPortId}' on '{from.GetSummary()}'" : $"'{edge.ToPortId}' on '{to.GetSummary()}'";
+                    diagnostics.Add(Error(QuestDiagnosticCodes.EdgeMissingPort, $"A connection refers to a missing port {missing}.", fromPort == null ? from.Id : to.Id));
                     continue;
                 }
 
                 if (!QuestPortRules.CanConnect(from, fromPort, to, toPort, out var reason))
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.IncompatiblePorts, $"Недопустимая связь «{from.GetSummary()}» → «{to.GetSummary()}»: {reason}", from.Id));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.IncompatiblePorts, $"Invalid connection '{from.GetSummary()}' -> '{to.GetSummary()}': {reason}", from.Id));
                     continue;
                 }
 
@@ -253,7 +253,7 @@ namespace Vokazhira.QuestEditor
                 {
                     diagnostics.Add(Error(
                         QuestDiagnosticCodes.RewardNotToCompletedEnd,
-                        $"Награда подключена к «{to.GetSummary()}». Награды подключаются только к End(Completed).",
+                        $"A reward is connected to '{to.GetSummary()}'. Rewards can only be connected to End(Completed).",
                         from.Id));
                     continue;
                 }
@@ -275,21 +275,21 @@ namespace Vokazhira.QuestEditor
                 var key = edge.Data.ToString();
                 if (!seen.Add(key))
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateEdge, $"Связь «{edge.From.GetSummary()}» → «{edge.To.GetSummary()}» повторяется.", edge.From.Id));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.DuplicateEdge, $"Connection '{edge.From.GetSummary()}' -> '{edge.To.GetSummary()}' is duplicated.", edge.From.Id));
                 }
 
                 var fromKey = edge.From.Id + "." + edge.FromPort.PortId;
                 outgoing[fromKey] = outgoing.TryGetValue(fromKey, out var outCount) ? outCount + 1 : 1;
                 if (edge.FromPort.Capacity == QuestPortCapacity.Single && outgoing[fromKey] == 2)
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.PortCapacityExceeded, $"К выходу «{edge.FromPort.DisplayName}» подключено больше одной связи.", edge.From.Id));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.PortCapacityExceeded, $"Output '{edge.FromPort.DisplayName}' has more than one connection.", edge.From.Id));
                 }
 
                 var toKey = edge.To.Id + "." + edge.ToPort.PortId;
                 incoming[toKey] = incoming.TryGetValue(toKey, out var inCount) ? inCount + 1 : 1;
                 if (edge.ToPort.Capacity == QuestPortCapacity.Single && incoming[toKey] == 2)
                 {
-                    diagnostics.Add(Error(QuestDiagnosticCodes.PortCapacityExceeded, $"К входу «{edge.ToPort.DisplayName}» подключено больше одной связи.", edge.To.Id));
+                    diagnostics.Add(Error(QuestDiagnosticCodes.PortCapacityExceeded, $"Input '{edge.ToPort.DisplayName}' has more than one connection.", edge.To.Id));
                 }
             }
         }
@@ -305,20 +305,20 @@ namespace Vokazhira.QuestEditor
                         continue;
                     }
 
-                    var side = port.Direction == QuestPortDirection.Input ? "Вход" : "Выход";
-                    diagnostics.Add(Error(QuestDiagnosticCodes.FlowPortNotConnected, $"{side} «{port.DisplayName}» не подключён.", node.Id));
+                    var side = port.Direction == QuestPortDirection.Input ? "Input" : "Output";
+                    diagnostics.Add(Error(QuestDiagnosticCodes.FlowPortNotConnected, $"{side} '{port.DisplayName}' is not connected.", node.Id));
                 }
 
                 if (node is RewardNodeData && !edges.Exists(e => ReferenceEquals(e.From, node)))
                 {
-                    diagnostics.Add(Warning(QuestDiagnosticCodes.RewardNotConnected, "Награда ни к чему не подключена и не будет выдана.", node.Id));
+                    diagnostics.Add(Warning(QuestDiagnosticCodes.RewardNotConnected, "The reward is not connected and will never be granted.", node.Id));
                 }
 
                 if (node is EndNodeData end
                     && end.Result == QuestEndResult.Completed
                     && !edges.Exists(e => ReferenceEquals(e.To, node) && e.ToPort.Kind == QuestPortKind.Reward))
                 {
-                    diagnostics.Add(Warning(QuestDiagnosticCodes.CompletedEndWithoutRewards, "У финала «выполнено» нет наград.", node.Id));
+                    diagnostics.Add(Warning(QuestDiagnosticCodes.CompletedEndWithoutRewards, "This Completed end has no rewards.", node.Id));
                 }
             }
         }
@@ -392,14 +392,14 @@ namespace Vokazhira.QuestEditor
 
             if (nodes.Exists(n => n is EndNodeData) && !nodes.Exists(n => n is EndNodeData && reachable.Contains(n)))
             {
-                diagnostics.Add(Error(QuestDiagnosticCodes.EndUnreachable, "Ни один узел End не достижим из Start.", starts[0].Id));
+                diagnostics.Add(Error(QuestDiagnosticCodes.EndUnreachable, "No End node is reachable from Start.", starts[0].Id));
             }
 
             foreach (var node in nodes)
             {
                 if (!(node is RewardNodeData) && !reachable.Contains(node))
                 {
-                    diagnostics.Add(Warning(QuestDiagnosticCodes.NodeUnreachable, $"Узел «{node.GetSummary()}» не достижим из Start.", node.Id));
+                    diagnostics.Add(Warning(QuestDiagnosticCodes.NodeUnreachable, $"Node '{node.GetSummary()}' is not reachable from Start.", node.Id));
                 }
             }
         }
@@ -448,7 +448,7 @@ namespace Vokazhira.QuestEditor
                     {
                         if (reported.Add(child))
                         {
-                            diagnostics.Add(Error(QuestDiagnosticCodes.FlowCycle, $"Цикл в потоке задания через узел «{child.GetSummary()}».", child.Id));
+                            diagnostics.Add(Error(QuestDiagnosticCodes.FlowCycle, $"The quest flow has a cycle through node '{child.GetSummary()}'.", child.Id));
                         }
                     }
                     else if (state[child] == Unvisited)

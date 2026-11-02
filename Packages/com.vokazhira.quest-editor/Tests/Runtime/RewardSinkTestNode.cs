@@ -11,7 +11,7 @@ namespace Vokazhira.QuestEditor.Tests
     {
         private static readonly IReadOnlyList<QuestPortDefinition> PortList = Array.AsReadOnly(new[]
         {
-            new QuestPortDefinition(QuestPortIds.Rewards, QuestPortDirection.Input, QuestPortKind.Reward, QuestPortCapacity.Multi, "Награды")
+            new QuestPortDefinition(QuestPortIds.Rewards, QuestPortDirection.Input, QuestPortKind.Reward, QuestPortCapacity.Multi, "Rewards")
         });
 
         public override IReadOnlyList<QuestPortDefinition> Ports => PortList;

@@ -111,8 +111,8 @@ namespace Vokazhira.QuestEditor.Tests
             var kill = new KillObjective { EnemyId = "goblin" };
             kill.SetRequiredCount(10);
 
-            Assert.That(kill.GetSummary(), Is.EqualTo("Убить goblin ×10"));
-            Assert.That(new GoldReward { Amount = 100 }.GetSummary(), Is.EqualTo("+100 золота"));
+            Assert.That(kill.GetSummary(), Is.EqualTo("Kill goblin ×10"));
+            Assert.That(new GoldReward { Amount = 100 }.GetSummary(), Is.EqualTo("+100 gold"));
         }
 
         [Test]

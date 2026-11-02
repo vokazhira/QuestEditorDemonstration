@@ -52,7 +52,7 @@ namespace Vokazhira.QuestEditor.Editor
             var fromPort = graph.FindNode(edge.FromNodeId).FindPort(edge.FromPortId);
             if (fromPort.Kind == QuestPortKind.Flow && QuestPortRules.WouldCreateFlowCycle(graph, edge.FromNodeId, edge.ToNodeId))
             {
-                reason = "Связь замыкает цикл: циклы в потоке задания запрещены.";
+                reason = "The connection creates a cycle; cycles in the quest flow are not allowed.";
                 return false;
             }
 

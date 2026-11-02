@@ -103,7 +103,7 @@ namespace Vokazhira.QuestEditor.Tests
 
             Assert.That(second.GetState("partial"), Is.EqualTo(QuestState.Claimable));
             Assert.That(second.Claim("partial"), Is.True);
-            Assert.That(secondCurrency.Gold, Is.EqualTo(0), "Золото уже выдано до сохранения.");
+            Assert.That(secondCurrency.Gold, Is.EqualTo(0), "Gold was already granted before saving.");
             Assert.That(secondExperience.Experience, Is.EqualTo(25));
             Assert.That(second.GetState("partial"), Is.EqualTo(QuestState.Completed));
         }
@@ -148,7 +148,7 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(orphan.state, Is.EqualTo("Active"));
             Assert.That(orphan.currentNodeId, Is.EqualTo("node-1"));
             Assert.That(orphan.progress[0].value, Is.EqualTo(4));
-            Assert.That(log.Contains(LogType.Warning, "«ghost» нет в базе"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "'ghost' is not in the database"), Is.True, log.ToString());
         }
 
         [Test]
@@ -181,10 +181,10 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(instance.IsFrozen, Is.True);
             Assert.That(instance.State, Is.EqualTo(QuestState.Active));
             Assert.That(instance.CurrentObjective, Is.Null);
-            Assert.That(instance.GetProgress(kill.ObjectiveId), Is.EqualTo(2), "Замороженное задание не получает прогресс.");
+            Assert.That(instance.GetProgress(kill.ObjectiveId), Is.EqualTo(2), "A frozen quest receives no progress.");
             Assert.That(manager.CanStart("hunt"), Is.False);
             Assert.That(manager.Abandon("hunt"), Is.False);
-            Assert.That(log.Contains(LogType.Warning, "«hunt» заморожено"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "'hunt' is frozen"), Is.True, log.ToString());
 
             var saved = manager.Capture().quests[0];
             Assert.That(saved.currentNodeId, Is.EqualTo("deleted-node"));
@@ -214,7 +214,7 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(manager.Restore(data), Is.False);
 
             Assert.That(manager.GetState("hunt"), Is.EqualTo(QuestState.Active));
-            Assert.That(log.Contains(LogType.Error, "новее поддерживаемой"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Error, "newer than the supported version"), Is.True, log.ToString());
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(manager.Restore(data), Is.True);
 
             Assert.That(manager.GetState("hunt"), Is.EqualTo(QuestState.Active));
-            Assert.That(log.Contains(LogType.Warning, "старше текущей"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "older than the current version"), Is.True, log.ToString());
         }
 
         [Test]
@@ -271,7 +271,7 @@ namespace Vokazhira.QuestEditor.Tests
             manager.Restore(data);
 
             Assert.That(manager.GetInstance("hunt").GetProgress(kill.ObjectiveId), Is.EqualTo(1));
-            Assert.That(log.Contains(LogType.Warning, "несколько записей"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "several records"), Is.True, log.ToString());
         }
 
         [Test]

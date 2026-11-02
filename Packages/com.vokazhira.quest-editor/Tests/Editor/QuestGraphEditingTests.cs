@@ -125,7 +125,7 @@ namespace Vokazhira.QuestEditor.Editor.Tests
             var connected = QuestGraphEditing.TryConnect(graph, new QuestEdgeData(b.Id, QuestPortIds.Out, a.Id, QuestPortIds.In), out var reason);
 
             Assert.That(connected, Is.False);
-            Assert.That(reason, Does.Contain("цикл"));
+            Assert.That(reason, Does.Contain("cycle"));
             Assert.That(graph.Edges.Count, Is.EqualTo(1));
         }
 

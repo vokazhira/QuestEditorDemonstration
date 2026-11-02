@@ -8,10 +8,10 @@ namespace Vokazhira.QuestEditor.Demo
     /// </summary>
     public sealed class QuestDemoBootstrap : MonoBehaviour
     {
-        [SerializeField, Tooltip("База заданий, доступных в демо.")]
+        [SerializeField, Tooltip("Quests available in the demo.")]
         private QuestDatabase database;
 
-        [SerializeField, Tooltip("Файл сохранения относительно Application.persistentDataPath.")]
+        [SerializeField, Tooltip("Save file path relative to Application.persistentDataPath.")]
         private string saveFileName = "QuestEditorDemo/progress.json";
 
         public QuestManager Manager { get; private set; }
@@ -23,7 +23,7 @@ namespace Vokazhira.QuestEditor.Demo
         {
             if (database == null)
             {
-                Debug.LogError("QuestDemoBootstrap: не назначена база заданий.", this);
+                Debug.LogError("QuestDemoBootstrap: no quest database is assigned.", this);
                 enabled = false;
                 return;
             }

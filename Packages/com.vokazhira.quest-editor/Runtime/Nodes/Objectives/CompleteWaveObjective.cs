@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Vokazhira.QuestEditor
 {
     [Serializable]
-    [QuestNode("Цели/Пройти волны", "#8E24AA")]
+    [QuestNode("Objectives/Complete Waves", "#8E24AA")]
     public sealed class CompleteWaveObjective : ObjectiveNodeData
     {
-        [SerializeField, Tooltip("Идентификатор волны. Пусто — засчитывается любая волна.")]
+        [SerializeField, Tooltip("Wave identifier. Leave empty to count any wave.")]
         private string waveId = string.Empty;
 
-        [SerializeField, Min(1), Tooltip("Сколько волн нужно пройти.")]
+        [SerializeField, Min(1), Tooltip("How many waves must be completed.")]
         private int requiredCount = 1;
 
         public string WaveId
@@ -33,8 +33,8 @@ namespace Vokazhira.QuestEditor
 
         public override string GetSummary()
         {
-            var target = string.IsNullOrEmpty(waveId) ? "любые волны" : $"волну {waveId}";
-            return $"Пройти {target} ×{requiredCount}";
+            var target = string.IsNullOrEmpty(waveId) ? "any wave" : $"wave {waveId}";
+            return $"Complete {target} ×{requiredCount}";
         }
     }
 }

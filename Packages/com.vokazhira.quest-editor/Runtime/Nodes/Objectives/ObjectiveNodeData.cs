@@ -12,20 +12,20 @@ namespace Vokazhira.QuestEditor
     {
         private static readonly IReadOnlyList<QuestPortDefinition> PortList = Array.AsReadOnly(new[]
         {
-            QuestPortDefinition.FlowInput(QuestPortIds.In, "Вход"),
-            QuestPortDefinition.FlowOutput(QuestPortIds.Out, "Выполнено")
+            QuestPortDefinition.FlowInput(QuestPortIds.In, "In"),
+            QuestPortDefinition.FlowOutput(QuestPortIds.Out, "Done")
         });
 
-        [SerializeField, Tooltip("Стабильный идентификатор цели. По нему сохраняется прогресс игрока.")]
+        [SerializeField, Tooltip("Stable objective identifier. Player progress is saved under it.")]
         private string objectiveId;
 
-        [SerializeField, Tooltip("Название цели для UI.")]
+        [SerializeField, Tooltip("Objective title shown in the UI.")]
         private string title = string.Empty;
 
-        [SerializeField, TextArea, Tooltip("Описание цели для UI.")]
+        [SerializeField, TextArea, Tooltip("Objective description shown in the UI.")]
         private string description = string.Empty;
 
-        [SerializeField, Tooltip("Необязательная цель. В текущей версии только хранится.")]
+        [SerializeField, Tooltip("Optional objective. Stored only in this version.")]
         private bool isOptional;
 
         protected ObjectiveNodeData()
@@ -65,17 +65,17 @@ namespace Vokazhira.QuestEditor
         {
             if (string.IsNullOrWhiteSpace(objectiveId))
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан ObjectiveId.");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "ObjectiveId is empty.");
             }
 
             if (RequiredCount <= 0)
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Требуемое количество должно быть больше 0 (сейчас {RequiredCount}).");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Required count must be greater than 0 (currently {RequiredCount}).");
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                context.AddWarning(QuestDiagnosticCodes.ObjectiveWithoutDescription, "У цели нет описания для UI.");
+                context.AddWarning(QuestDiagnosticCodes.ObjectiveWithoutDescription, "The objective has no description for the UI.");
             }
         }
 

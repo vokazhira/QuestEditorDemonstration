@@ -4,10 +4,10 @@ using UnityEngine;
 namespace Vokazhira.QuestEditor
 {
     [Serializable]
-    [QuestNode("Награды/Опыт", "#00ACC1")]
+    [QuestNode("Rewards/Experience", "#00ACC1")]
     public sealed class ExperienceReward : RewardNodeData
     {
-        [SerializeField, Min(1), Tooltip("Количество опыта.")]
+        [SerializeField, Min(1), Tooltip("Amount of experience.")]
         private int amount = 1;
 
         public int Amount
@@ -21,13 +21,13 @@ namespace Vokazhira.QuestEditor
             base.Validate(context);
             if (amount <= 0)
             {
-                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Количество опыта должно быть больше 0 (сейчас {amount}).");
+                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Experience amount must be greater than 0 (currently {amount}).");
             }
         }
 
         public override string GetSummary()
         {
-            return $"+{amount} опыта";
+            return $"+{amount} XP";
         }
     }
 }

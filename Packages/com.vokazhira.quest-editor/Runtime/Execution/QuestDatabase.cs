@@ -10,7 +10,7 @@ namespace Vokazhira.QuestEditor
     [CreateAssetMenu(fileName = "QuestDatabase", menuName = "Quest Editor/Quest Database", order = 1)]
     public sealed class QuestDatabase : ScriptableObject
     {
-        [SerializeField, Tooltip("Задания, доступные в игре.")]
+        [SerializeField, Tooltip("Quests available in the game.")]
         private List<QuestGraphAsset> quests = new List<QuestGraphAsset>();
 
         public IReadOnlyList<QuestGraphAsset> Quests => quests;

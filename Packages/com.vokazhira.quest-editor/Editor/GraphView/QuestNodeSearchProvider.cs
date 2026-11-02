@@ -36,7 +36,7 @@ namespace Vokazhira.QuestEditor.Editor
         {
             var tree = new List<SearchTreeEntry>
             {
-                new SearchTreeGroupEntry(new GUIContent("Создать узел"), 0)
+                new SearchTreeGroupEntry(new GUIContent("Create Node"), 0)
             };
 
             var sorted = new List<QuestNodeTypeInfo>(types);

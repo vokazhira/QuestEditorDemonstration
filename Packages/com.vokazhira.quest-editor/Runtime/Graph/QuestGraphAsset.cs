@@ -12,19 +12,19 @@ namespace Vokazhira.QuestEditor
     {
         public const int CurrentFormatVersion = 1;
 
-        [SerializeField, Tooltip("Уникальный идентификатор задания. Используется в сохранениях и условиях других заданий.")]
+        [SerializeField, Tooltip("Unique quest identifier. Used in saves and in conditions of other quests.")]
         private string questId = string.Empty;
 
-        [SerializeField, Tooltip("Название задания для UI.")]
+        [SerializeField, Tooltip("Quest name shown in the UI.")]
         private string displayName = string.Empty;
 
-        [SerializeField, TextArea, Tooltip("Описание задания для UI.")]
+        [SerializeField, TextArea, Tooltip("Quest description shown in the UI.")]
         private string description = string.Empty;
 
         [SerializeField, HideInInspector]
         private int formatVersion = CurrentFormatVersion;
 
-        [SerializeField, Tooltip("AutoGrant — награды выдаются сразу при завершении; ManualClaim — по вызову Claim.")]
+        [SerializeField, Tooltip("AutoGrant: rewards are granted on completion. ManualClaim: rewards are granted when Claim is called.")]
         private QuestRewardMode rewardMode = QuestRewardMode.AutoGrant;
 
         [SerializeReference]
