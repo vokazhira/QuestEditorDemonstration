@@ -33,7 +33,7 @@
 ## 2. Компоненты
 
 ```
-┌──────────────────────────── YourName.QuestEditor.Editor (Editor only) ───────────────────────────┐
+┌──────────────────────────── Vokazhira.QuestEditor.Editor (Editor only) ───────────────────────────┐
 │                                                                                                   │
 │  QuestEditorWindow ── Toolbar ── QuestSettingsPopup                                               │
 │        │                                                                                          │
@@ -47,7 +47,7 @@
 │  QuestDatabaseEditor (кнопка «Собрать все квесты проекта»)                                         │
 └───────────────────────────────────────────────┬───────────────────────────────────────────────────┘
                                                 │ ссылается
-┌───────────────────────────────────────────────▼──── YourName.QuestEditor (Runtime) ──────────────┐
+┌───────────────────────────────────────────────▼──── Vokazhira.QuestEditor (Runtime) ──────────────┐
 │ Graph:       QuestGraphAsset, QuestNodeData, QuestEdgeData, QuestPortDefinition, QuestPortRules,  │
 │              QuestNodeAttribute                                                                    │
 │ Nodes:       Start / End / Objective* / Condition* / Reward*                                       │
@@ -81,10 +81,10 @@
 
 | Сборка | Платформы | Ссылки (по имени) | Назначение |
 |---|---|---|---|
-| `YourName.QuestEditor` | все | — | Модель, валидатор, исполнение, сохранения |
-| `YourName.QuestEditor.Editor` | Editor | `YourName.QuestEditor` | Окно, GraphView, инспектор, библиотека |
-| `YourName.QuestEditor.Tests.Runtime` | Editor | `YourName.QuestEditor`, `UnityEngine.TestRunner`, `UnityEditor.TestRunner`; `nunit.framework.dll`; `defineConstraints: UNITY_INCLUDE_TESTS` | EditMode-тесты runtime-логики. **Не** ссылается на Editor-сборку пакета → тесты подтверждают, что логика работает без редакторского кода |
-| `YourName.QuestEditor.Tests.Editor` | Editor | обе сборки пакета + TestRunner; `nunit.framework.dll`; `UNITY_INCLUDE_TESTS` | Тесты, которым нужен `UnityEditor` (AssetDatabase, `CopySerialized`, рабочая копия, утилиты редактора) |
+| `Vokazhira.QuestEditor` | все | — | Модель, валидатор, исполнение, сохранения |
+| `Vokazhira.QuestEditor.Editor` | Editor | `Vokazhira.QuestEditor` | Окно, GraphView, инспектор, библиотека |
+| `Vokazhira.QuestEditor.Tests.Runtime` | Editor | `Vokazhira.QuestEditor`, `UnityEngine.TestRunner`, `UnityEditor.TestRunner`; `nunit.framework.dll`; `defineConstraints: UNITY_INCLUDE_TESTS` | EditMode-тесты runtime-логики. **Не** ссылается на Editor-сборку пакета → тесты подтверждают, что логика работает без редакторского кода |
+| `Vokazhira.QuestEditor.Tests.Editor` | Editor | обе сборки пакета + TestRunner; `nunit.framework.dll`; `UNITY_INCLUDE_TESTS` | Тесты, которым нужен `UnityEditor` (AssetDatabase, `CopySerialized`, рабочая копия, утилиты редактора) |
 
 Почему тестовая «Runtime»-сборка тоже Editor-only — см. D-004.
 
@@ -229,15 +229,15 @@ Decisions.md. `QuestGraphRunner`, `QuestRewardDispatcher`, `QuestInstance` — `
 
 ## 7. Файлы по этапам
 
-Пути относительно `Packages/com.yourname.quest-editor/`. Один класс — один файл. Список
+Пути относительно `Packages/com.vokazhira.quest-editor/`. Один класс — один файл. Список
 ориентировочный: файл, который окажется не нужен, не создаётся.
 
 **Этап 1 — каркас**
 - `package.json`, `README.md` (заглушка)
-- `Runtime/YourName.QuestEditor.asmdef`
-- `Editor/YourName.QuestEditor.Editor.asmdef`
-- `Tests/Runtime/YourName.QuestEditor.Tests.Runtime.asmdef`
-- `Tests/Editor/YourName.QuestEditor.Tests.Editor.asmdef`
+- `Runtime/Vokazhira.QuestEditor.asmdef`
+- `Editor/Vokazhira.QuestEditor.Editor.asmdef`
+- `Tests/Runtime/Vokazhira.QuestEditor.Tests.Runtime.asmdef`
+- `Tests/Editor/Vokazhira.QuestEditor.Tests.Editor.asmdef`
 - по одному минимальному `.cs` в каждой сборке не создаю (пустые классы запрещены); asmdef без
   скриптов Unity допускает — сборка просто не компилируется, пока нет кода
 
@@ -326,6 +326,6 @@ Decisions.md. `QuestGraphRunner`, `QuestRewardDispatcher`, `QuestInstance` — `
 
 | Риск | Что делаем |
 |---|---|
-| Тесты встроенного (embedded) пакета могут не появиться в Test Runner без `testables` в `manifest.json` | Проверка на этапе 1 вашими руками. Если тестов не видно — попрошу разрешения добавить `"testables": ["com.yourname.quest-editor"]` в `manifest.json` |
+| Тесты встроенного (embedded) пакета могут не появиться в Test Runner без `testables` в `manifest.json` | Проверка на этапе 1 вашими руками. Если тестов не видно — попрошу разрешения добавить `"testables": ["com.vokazhira.quest-editor"]` в `manifest.json` |
 | Я не могу запустить Unity в этой среде (Linux-контейнер, Unity нет) | Компиляцию и тесты подтверждаете вы; в отчётах это прямо указано |
-| Имя пакета и namespace `YourName` — заглушки; переименование после появления ассетов сломает `[SerializeReference]`-данные | Вопрос задан до этапа 1 |
+| Переименование namespace/сборки после появления ассетов сломает `[SerializeReference]`-данные | Имена зафиксированы до этапа 1: `com.vokazhira.quest-editor` / `Vokazhira.QuestEditor` (D-001) |

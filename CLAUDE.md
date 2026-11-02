@@ -14,9 +14,9 @@
   - `FindObjectOfType` объявлен устаревшим — и он нам всё равно запрещён (см. ниже).
 - **C# 9**, API Compatibility Level .NET Standard 2.1. Не используй: `record`, `init`-аксессоры
   (нет `IsExternalInit`), file-scoped namespace, `global using`, required members и прочее из C# 10+.
-- Пакет: `Packages/com.yourname.quest-editor/` (embedded UPM package).
+- Пакет: `Packages/com.vokazhira.quest-editor/` (embedded UPM package).
   Пример: `Assets/QuestEditorDemo/` (на время разработки), затем переносится в `Samples~/`.
-- Namespaces: `YourName.QuestEditor` (Runtime), `YourName.QuestEditor.Editor` (Editor).
+- Namespaces: `Vokazhira.QuestEditor` (Runtime), `Vokazhira.QuestEditor.Editor` (Editor).
 
 ## Порядок работы
 
@@ -34,10 +34,15 @@
 4. Если неоднозначность влияет на архитектуру — задай один конкретный вопрос.
    В остальных случаях принимай решение сам и записывай его в `Docs/Decisions.md`
    (дата, решение, причина).
-5. Не трогай файлы вне `Packages/com.yourname.quest-editor/`, `Assets/QuestEditorDemo/`,
+5. Не трогай файлы вне `Packages/com.vokazhira.quest-editor/`, `Assets/QuestEditorDemo/`,
    `Docs/` и `CLAUDE.md` без моего разрешения. Не меняй `ProjectSettings/` и `Packages/manifest.json`
    без согласования.
 6. Не генерируй весь проект одним махом. Небольшие файлы, один класс — один файл.
+
+## Стиль кода
+
+- Не оставляй `//`-комментарии рядом с полями и перед методами. Если пояснение нужно —
+  только `/// <summary>` (XML-документация) и `[Tooltip]` для сериализуемых полей.
 
 ## Unity-специфика
 

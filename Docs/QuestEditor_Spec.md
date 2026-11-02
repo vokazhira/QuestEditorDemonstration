@@ -240,21 +240,21 @@ public readonly struct QuestEvent
 ## 7. Структура пакета
 
 ```
-Packages/com.yourname.quest-editor/
+Packages/com.vokazhira.quest-editor/
 ├── package.json            ("unity": "2023.1"; зависимости — только подтверждённые)
 ├── README.md, CHANGELOG.md, LICENSE
-├── Runtime/   YourName.QuestEditor.asmdef
+├── Runtime/   Vokazhira.QuestEditor.asmdef
 │   ├── Graph/          QuestGraphAsset, QuestNodeData, QuestEdgeData, ports, rules
 │   ├── Nodes/          Start, End, Objectives/, Conditions/, Rewards/
 │   ├── Validation/     QuestGraphValidator, QuestDiagnostic
 │   ├── Execution/      QuestManager, QuestInstance, QuestGraphRunner, QuestRewardDispatcher, QuestEvent
 │   ├── Services/       ICurrencyService, IExperienceService, IRewardHandler
 │   └── Persistence/    DTO, IQuestSaveService, FileQuestSaveService
-├── Editor/    YourName.QuestEditor.Editor.asmdef
+├── Editor/    Vokazhira.QuestEditor.Editor.asmdef
 │   ├── Window/  GraphView/  Inspector/  Library/  Utilities/
 ├── Tests/
-│   ├── Editor/   YourName.QuestEditor.Tests.Editor.asmdef
-│   └── Runtime/  YourName.QuestEditor.Tests.Runtime.asmdef
+│   ├── Editor/   Vokazhira.QuestEditor.Tests.Editor.asmdef
+│   └── Runtime/  Vokazhira.QuestEditor.Tests.Runtime.asmdef
 └── Samples~/BasicQuestExample/
 ```
 
@@ -315,7 +315,7 @@ Completed / Failed, AutoGrant / ManualClaim, отсутствующий обра
 золото и опыт, сообщение о завершении, Save/Load. Только публичный API. Затем — перенос в `Samples~/`.
 
 **Этап 9. Документация и выпуск.** README на русском: назначение, версия Unity (2023.1.22f1), установка
-(локально и по git URL `...?path=/Packages/com.yourname.quest-editor`), структура, первое задание,
+(локально и по git URL `...?path=/Packages/com.vokazhira.quest-editor`), структура, первое задание,
 узлы и связи, цели и награды, использование `QuestManager`, регистрация сервисов, сохранения,
 свой тип цели / условия / награды (пример по ~20 строк), `[MovedFrom]`, ограничения, запуск тестов.
 
