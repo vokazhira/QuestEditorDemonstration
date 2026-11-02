@@ -1,0 +1,201 @@
+.qe-root {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.qe-toolbar__title {
+    -unity-text-align: middle-right;
+    -unity-font-style: bold;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.qe-toolbar__title--dirty {
+    color: rgb(255, 196, 64);
+}
+
+.qe-settings {
+    padding: 6px 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.35);
+}
+
+.qe-body {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.qe-library {
+    width: 260px;
+    min-width: 200px;
+    flex-shrink: 0;
+    border-right-width: 1px;
+    border-right-color: rgba(0, 0, 0, 0.35);
+}
+
+.qe-library__header {
+    -unity-font-style: bold;
+    padding: 6px 8px 2px 8px;
+}
+
+.qe-library__search {
+    width: auto;
+    margin: 4px 6px;
+}
+
+.qe-library__list {
+    flex-grow: 1;
+}
+
+.qe-library__buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 4px;
+    border-top-width: 1px;
+    border-top-color: rgba(0, 0, 0, 0.35);
+}
+
+.qe-library__buttons > Button {
+    flex-grow: 1;
+}
+
+.qe-library-item {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 4px;
+    padding-right: 8px;
+}
+
+.qe-library-item__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+
+.qe-library-item__texts {
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.qe-library-item__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qe-library-item__id {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+.qe-library-item--current .qe-library-item__title {
+    -unity-font-style: bold;
+}
+
+.qe-center {
+    flex-grow: 1;
+}
+
+.qe-graph-placeholder {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    opacity: 0.6;
+}
+
+.qe-inspector {
+    width: 300px;
+    min-width: 240px;
+    flex-shrink: 0;
+    border-left-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.35);
+    padding: 4px 6px;
+}
+
+.qe-inspector__title {
+    -unity-font-style: bold;
+    padding: 2px 2px 4px 2px;
+    opacity: 0.7;
+}
+
+.qe-inspector__header {
+    -unity-font-style: bold;
+    font-size: 14px;
+    padding: 2px;
+}
+
+.qe-inspector__subheader {
+    font-size: 10px;
+    opacity: 0.55;
+    padding: 0 2px 6px 2px;
+    white-space: normal;
+}
+
+.qe-inspector__scroll {
+    flex-grow: 1;
+}
+
+.qe-inspector__fields #empty,
+.qe-inspector__fields #no-fields {
+    white-space: normal;
+    opacity: 0.6;
+    padding: 4px 2px;
+}
+
+.qe-diagnostics {
+    height: 150px;
+    flex-shrink: 0;
+    border-top-width: 1px;
+    border-top-color: rgba(0, 0, 0, 0.35);
+}
+
+.qe-diagnostics__header {
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 8px;
+}
+
+.qe-diagnostics__summary {
+    -unity-font-style: bold;
+}
+
+.qe-diagnostics__summary--error {
+    color: rgb(255, 110, 100);
+}
+
+.qe-diagnostics__stale {
+    margin-left: 12px;
+    opacity: 0.7;
+    -unity-font-style: italic;
+}
+
+.qe-diagnostics__list {
+    flex-grow: 1;
+}
+
+.qe-diagnostic {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 6px;
+}
+
+.qe-diagnostic__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.qe-diagnostic__code {
+    width: 52px;
+    flex-shrink: 0;
+    margin-left: 4px;
+    opacity: 0.7;
+}
+
+.qe-diagnostic__message {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

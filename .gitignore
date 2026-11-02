@@ -112,3 +112,10 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# JetBrains Rider per-developer settings
+.idea/
+
+# Package samples imported through the Package Manager (originals live in Samples~)
+/[Aa]ssets/[Ss]amples/
+/[Aa]ssets/[Ss]amples.meta

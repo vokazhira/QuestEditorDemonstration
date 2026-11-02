@@ -1,0 +1,25 @@
+{
+  "name": "com.vokazhira.quest-editor",
+  "version": "0.1.0",
+  "displayName": "Quest Editor",
+  "description": "Visual graph-based quest editor and a runtime system that executes the quests.",
+  "unity": "2023.1",
+  "license": "MIT",
+  "documentationUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/README.md",
+  "changelogUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/CHANGELOG.md",
+  "licensesUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/LICENSE.md",
+  "author": {
+    "name": "vokazhira"
+  },
+  "dependencies": {
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Quest Example",
+      "description": "Demo: two quests (including the \"Forest Cleanup\" example), a quest database and a scene with a QuestManager, event buttons, rewards and Save/Load. Tools > Quest Editor > Demo > Build Demo Assets rebuilds the sample assets.",
+      "path": "Samples~/BasicQuestExample"
+    }
+  ]
+}

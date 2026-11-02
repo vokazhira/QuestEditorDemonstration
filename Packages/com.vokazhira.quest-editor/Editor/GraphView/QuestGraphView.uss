@@ -1,0 +1,18 @@
+.qe-graph {
+    flex-grow: 1;
+}
+
+.qe-graph GridBackground {
+    --grid-background-color: rgb(40, 40, 40);
+    --line-color: rgba(193, 196, 192, 0.08);
+    --thick-line-color: rgba(193, 196, 192, 0.16);
+    --spacing: 20;
+    --thick-lines: 10;
+}
+
+.qe-node #title-label {
+    color: rgb(240, 240, 240);
+    -unity-font-style: bold;
+    white-space: normal;
+    max-width: 260px;
+}
