@@ -31,6 +31,15 @@ namespace Vokazhira.QuestEditor
             return QuestObjectiveMatching.TryMatch(e, QuestEventTypes.EnemyKilled, enemyId, false, out delta);
         }
 
+        public override void Validate(QuestValidationContext context)
+        {
+            base.Validate(context);
+            if (string.IsNullOrWhiteSpace(enemyId))
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан enemyId.");
+            }
+        }
+
         public override string GetSummary()
         {
             return $"Убить {QuestObjectiveMatching.Display(enemyId)} ×{requiredCount}";

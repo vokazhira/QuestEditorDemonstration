@@ -31,5 +31,13 @@ namespace Vokazhira.QuestEditor
         }
 
         public override IReadOnlyList<QuestPortDefinition> Ports => PortList;
+
+        public override void Validate(QuestValidationContext context)
+        {
+            if (string.IsNullOrWhiteSpace(rewardId))
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан RewardId.");
+            }
+        }
     }
 }

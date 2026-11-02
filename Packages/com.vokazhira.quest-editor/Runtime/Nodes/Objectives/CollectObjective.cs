@@ -31,6 +31,15 @@ namespace Vokazhira.QuestEditor
             return QuestObjectiveMatching.TryMatch(e, QuestEventTypes.ItemCollected, itemId, false, out delta);
         }
 
+        public override void Validate(QuestValidationContext context)
+        {
+            base.Validate(context);
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан itemId.");
+            }
+        }
+
         public override string GetSummary()
         {
             return $"Собрать {QuestObjectiveMatching.Display(itemId)} ×{requiredCount}";

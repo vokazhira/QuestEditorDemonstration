@@ -15,6 +15,7 @@ namespace Vokazhira.QuestEditor.Editor
     {
         private readonly List<QuestGraphAsset> allQuests = new List<QuestGraphAsset>();
         private readonly List<QuestGraphAsset> visibleQuests = new List<QuestGraphAsset>();
+        private readonly Dictionary<QuestGraphAsset, string> firstErrorByQuest = new Dictionary<QuestGraphAsset, string>();
         private readonly ToolbarSearchField searchField;
         private readonly ListView listView;
         private readonly Button duplicateButton;
@@ -70,6 +71,7 @@ namespace Vokazhira.QuestEditor.Editor
         {
             allQuests.Clear();
             allQuests.AddRange(QuestAssetUtility.FindAllQuestAssets());
+            UpdateValidity();
             ApplyFilter();
         }
 
@@ -90,6 +92,28 @@ namespace Vokazhira.QuestEditor.Editor
             else
             {
                 listView.ClearSelection();
+            }
+        }
+
+        /// <summary>
+        /// Проверяет сохранённые ассеты (не рабочую копию) и запоминает первую ошибку каждого невалидного задания.
+        /// </summary>
+        private void UpdateValidity()
+        {
+            firstErrorByQuest.Clear();
+            foreach (var quest in allQuests)
+            {
+                if (quest == null)
+                {
+                    continue;
+                }
+
+                var diagnostics = QuestEditorValidation.Validate(quest, quest, allQuests);
+                var error = diagnostics.FirstOrDefault(d => d.Severity == QuestDiagnosticSeverity.Error);
+                if (error.Severity == QuestDiagnosticSeverity.Error && !string.IsNullOrEmpty(error.Code))
+                {
+                    firstErrorByQuest[quest] = $"{error.Code}: {error.Message}";
+                }
             }
         }
 
@@ -129,12 +153,18 @@ namespace Vokazhira.QuestEditor.Editor
         {
             var item = new VisualElement();
             item.AddToClassList("qe-library-item");
+            var icon = new Image { name = "error-icon", image = QuestDiagnosticsView.GetIcon(QuestDiagnosticSeverity.Error) };
+            icon.AddToClassList("qe-library-item__icon");
+            var texts = new VisualElement();
+            texts.AddToClassList("qe-library-item__texts");
             var title = new Label { name = "title" };
             title.AddToClassList("qe-library-item__title");
             var questId = new Label { name = "quest-id" };
             questId.AddToClassList("qe-library-item__id");
-            item.Add(title);
-            item.Add(questId);
+            texts.Add(title);
+            texts.Add(questId);
+            item.Add(icon);
+            item.Add(texts);
             return item;
         }
 
@@ -143,6 +173,10 @@ namespace Vokazhira.QuestEditor.Editor
             var quest = index >= 0 && index < visibleQuests.Count ? visibleQuests[index] : null;
             var title = element.Q<Label>("title");
             var questId = element.Q<Label>("quest-id");
+            var icon = element.Q<Image>("error-icon");
+            var hasError = quest != null && firstErrorByQuest.ContainsKey(quest);
+            icon.style.visibility = hasError ? Visibility.Visible : Visibility.Hidden;
+            element.tooltip = hasError ? "Задание невалидно и не будет запущено в игре.\n" + firstErrorByQuest[quest] : null;
             if (quest == null)
             {
                 title.text = "(отсутствует)";

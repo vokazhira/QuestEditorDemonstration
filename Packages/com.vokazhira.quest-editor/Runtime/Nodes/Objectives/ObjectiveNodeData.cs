@@ -61,6 +61,24 @@ namespace Vokazhira.QuestEditor
 
         public override IReadOnlyList<QuestPortDefinition> Ports => PortList;
 
+        public override void Validate(QuestValidationContext context)
+        {
+            if (string.IsNullOrWhiteSpace(objectiveId))
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан ObjectiveId.");
+            }
+
+            if (RequiredCount <= 0)
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Требуемое количество должно быть больше 0 (сейчас {RequiredCount}).");
+            }
+
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                context.AddWarning(QuestDiagnosticCodes.ObjectiveWithoutDescription, "У цели нет описания для UI.");
+            }
+        }
+
         /// <summary>
         /// Чистая функция: сообщает, продвигает ли событие эту цель и на сколько.
         /// </summary>

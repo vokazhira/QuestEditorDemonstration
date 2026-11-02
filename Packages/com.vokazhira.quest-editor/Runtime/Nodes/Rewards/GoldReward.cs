@@ -16,6 +16,15 @@ namespace Vokazhira.QuestEditor
             set => amount = value;
         }
 
+        public override void Validate(QuestValidationContext context)
+        {
+            base.Validate(context);
+            if (amount <= 0)
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, $"Количество золота должно быть больше 0 (сейчас {amount}).");
+            }
+        }
+
         public override string GetSummary()
         {
             return $"+{amount} золота";

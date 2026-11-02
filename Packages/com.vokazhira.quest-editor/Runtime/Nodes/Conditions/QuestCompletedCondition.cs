@@ -23,6 +23,14 @@ namespace Vokazhira.QuestEditor
                 && context.GetState(questId) == QuestState.Completed;
         }
 
+        public override void Validate(QuestValidationContext context)
+        {
+            if (string.IsNullOrWhiteSpace(questId))
+            {
+                context.AddError(QuestDiagnosticCodes.InvalidValue, "Не задан questId проверяемого задания.");
+            }
+        }
+
         public override string GetSummary()
         {
             return string.IsNullOrEmpty(questId) ? "Задание ? выполнено?" : $"Задание «{questId}» выполнено?";

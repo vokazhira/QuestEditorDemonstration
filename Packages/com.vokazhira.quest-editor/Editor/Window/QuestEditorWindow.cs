@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.Experimental.GraphView;
@@ -27,6 +29,8 @@ namespace Vokazhira.QuestEditor.Editor
         private Label graphPlaceholder;
         private QuestGraphView graphView;
         private QuestNodeInspector inspector;
+        private QuestDiagnosticsView diagnosticsView;
+        private string validatedSnapshot;
         private SerializedObject serializedGraph;
 
         private bool HasOpenQuest => session != null && session.IsAlive;
@@ -134,6 +138,7 @@ namespace Vokazhira.QuestEditor.Editor
             toolbar.OpenClicked += OpenQuestFromFile;
             toolbar.SaveClicked += () => SaveCurrent();
             toolbar.SaveAsClicked += () => SaveCurrentAs();
+            toolbar.ValidateClicked += () => RunValidation();
             toolbar.SettingsToggled += visible =>
             {
                 settingsVisible = visible;
@@ -172,6 +177,10 @@ namespace Vokazhira.QuestEditor.Editor
             inspector.NodeChanged += OnInspectorNodeChanged;
             body.Add(inspector);
 
+            diagnosticsView = new QuestDiagnosticsView();
+            diagnosticsView.DiagnosticSelected += OnDiagnosticSelected;
+            root.Add(diagnosticsView);
+
             library.Refresh();
             BindSession();
             RestoreOrFrameView();
@@ -208,6 +217,7 @@ namespace Vokazhira.QuestEditor.Editor
             settingsPanel?.Bind(serializedGraph);
             graphView?.SetGraph(HasOpenQuest ? session.Graph : null);
             RefreshInspector(true);
+            RunValidation();
             library?.SetCurrent(HasOpenQuest ? session.AssetGuid : null);
             UpdateUnsavedState();
         }
@@ -221,7 +231,40 @@ namespace Vokazhira.QuestEditor.Editor
         private void UpdateUnsavedState()
         {
             hasUnsavedChanges = HasOpenQuest && session.RefreshUnsavedState();
+            diagnosticsView?.SetStale(HasOpenQuest && validatedSnapshot != null && session.CurrentSnapshot != validatedSnapshot);
             RefreshView();
+        }
+
+        private List<QuestDiagnostic> RunValidation()
+        {
+            if (diagnosticsView == null)
+            {
+                return null;
+            }
+
+            if (!HasOpenQuest)
+            {
+                validatedSnapshot = null;
+                diagnosticsView.ResetResults();
+                return null;
+            }
+
+            var diagnostics = QuestEditorValidation.Validate(session.Graph, session.LoadAsset());
+            session.RefreshUnsavedState();
+            validatedSnapshot = session.CurrentSnapshot;
+            diagnosticsView.SetDiagnostics(diagnostics);
+            return diagnostics;
+        }
+
+        private void OnDiagnosticSelected(QuestDiagnostic diagnostic)
+        {
+            if (graphView == null || diagnostic.NodeId == null)
+            {
+                return;
+            }
+
+            graphView.SelectNode(diagnostic.NodeId);
+            graphView.FrameSelection();
         }
 
         private void RefreshView()
@@ -237,6 +280,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             graphView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             inspector.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
+            diagnosticsView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             graphPlaceholder.style.display = hasQuest ? DisplayStyle.None : DisplayStyle.Flex;
             graphPlaceholder.text = "Выберите задание в библиотеке (двойной клик) или создайте новое кнопкой New.";
         }
@@ -405,6 +449,16 @@ namespace Vokazhira.QuestEditor.Editor
                 return SaveCurrentAs();
             }
 
+            if (QuestEditorValidation.HasMissingTypes(session.LoadAsset())
+                && !EditorUtility.DisplayDialog(
+                    "Узлы с отсутствующими классами",
+                    "В ассете есть узлы, классы которых не найдены. При сохранении их данные будут потеряны. Сначала верните классы или добавьте [MovedFrom].\n\nВсё равно сохранить?",
+                    "Сохранить",
+                    "Отмена"))
+            {
+                return false;
+            }
+
             if (!session.Save(out var error))
             {
                 EditorUtility.DisplayDialog("Не удалось сохранить", error, "OK");
@@ -461,7 +515,14 @@ namespace Vokazhira.QuestEditor.Editor
             library?.Refresh();
             library?.SetCurrent(session.AssetGuid);
             library?.Select(session.LoadAsset());
+            var diagnostics = RunValidation();
             UpdateUnsavedState();
+
+            var errorCount = diagnostics?.Count(d => d.Severity == QuestDiagnosticSeverity.Error) ?? 0;
+            if (errorCount > 0)
+            {
+                ShowNotification(new GUIContent($"Сохранено с ошибками ({errorCount}). Задание не будет запущено в игре."));
+            }
         }
 
         private void CreateQuestAsset()

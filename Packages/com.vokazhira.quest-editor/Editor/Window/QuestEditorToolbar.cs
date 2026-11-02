@@ -12,6 +12,7 @@ namespace Vokazhira.QuestEditor.Editor
         private readonly Label titleLabel;
         private readonly ToolbarButton saveButton;
         private readonly ToolbarButton saveAsButton;
+        private readonly ToolbarButton validateButton;
         private readonly ToolbarToggle settingsToggle;
 
         public QuestEditorToolbar()
@@ -24,6 +25,8 @@ namespace Vokazhira.QuestEditor.Editor
             saveAsButton = new ToolbarButton(() => SaveAsClicked?.Invoke()) { text = "Save As", tooltip = "Сохранить задание в новый ассет" };
             Add(saveButton);
             Add(saveAsButton);
+            validateButton = new ToolbarButton(() => ValidateClicked?.Invoke()) { text = "Validate", tooltip = "Проверить граф на ошибки" };
+            Add(validateButton);
 
             settingsToggle = new ToolbarToggle { text = "Настройки", tooltip = "Показать настройки задания: questId, название, описание, режим наград" };
             settingsToggle.RegisterValueChangedCallback(e => SettingsToggled?.Invoke(e.newValue));
@@ -42,6 +45,7 @@ namespace Vokazhira.QuestEditor.Editor
         public event Action OpenClicked;
         public event Action SaveClicked;
         public event Action SaveAsClicked;
+        public event Action ValidateClicked;
         public event Action<bool> SettingsToggled;
 
         public void SetState(string title, bool hasUnsavedChanges, bool hasQuest, bool settingsVisible)
@@ -50,6 +54,7 @@ namespace Vokazhira.QuestEditor.Editor
             titleLabel.EnableInClassList("qe-toolbar__title--dirty", hasUnsavedChanges);
             saveButton.SetEnabled(hasQuest);
             saveAsButton.SetEnabled(hasQuest);
+            validateButton.SetEnabled(hasQuest);
             settingsToggle.SetEnabled(hasQuest);
             settingsToggle.SetValueWithoutNotify(settingsVisible);
         }

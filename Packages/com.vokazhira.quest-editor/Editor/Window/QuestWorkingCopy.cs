@@ -19,12 +19,18 @@ namespace Vokazhira.QuestEditor.Editor
         [SerializeField] private QuestGraphAsset graph;
         [SerializeField] private string savedSnapshot;
         [SerializeField] private bool hasUnsavedChanges;
+        [NonSerialized] private string currentSnapshot;
 
         public QuestGraphAsset Graph => graph;
         public string AssetGuid => assetGuid;
         public bool IsDraft => string.IsNullOrEmpty(assetGuid);
         public bool IsAlive => graph != null;
         public bool HasUnsavedChanges => hasUnsavedChanges;
+
+        /// <summary>
+        /// JSON-снимок рабочей копии на момент последнего <see cref="RefreshUnsavedState"/> или сохранения.
+        /// </summary>
+        public string CurrentSnapshot => graph == null ? null : currentSnapshot ?? (currentSnapshot = TakeSnapshot(graph));
 
         public string Title
         {
@@ -101,7 +107,8 @@ namespace Vokazhira.QuestEditor.Editor
         /// </summary>
         public bool RefreshUnsavedState()
         {
-            hasUnsavedChanges = graph != null && (IsDraft || !string.Equals(savedSnapshot, TakeSnapshot(graph), StringComparison.Ordinal));
+            currentSnapshot = graph != null ? TakeSnapshot(graph) : null;
+            hasUnsavedChanges = graph != null && (IsDraft || !string.Equals(savedSnapshot, currentSnapshot, StringComparison.Ordinal));
             return hasUnsavedChanges;
         }
 
@@ -191,6 +198,7 @@ namespace Vokazhira.QuestEditor.Editor
             AssetDatabase.SaveAssetIfDirty(asset);
 
             savedSnapshot = TakeSnapshot(graph);
+            currentSnapshot = savedSnapshot;
             hasUnsavedChanges = false;
         }
 

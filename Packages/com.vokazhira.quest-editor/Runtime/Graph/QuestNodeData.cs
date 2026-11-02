@@ -33,6 +33,13 @@ namespace Vokazhira.QuestEditor
         public abstract IReadOnlyList<QuestPortDefinition> Ports { get; }
 
         /// <summary>
+        /// Проверки собственных полей узла. Вызывается валидатором; диагностики добавляются через <paramref name="context"/>.
+        /// </summary>
+        public virtual void Validate(QuestValidationContext context)
+        {
+        }
+
+        /// <summary>
         /// Короткий текст для заголовка узла в редакторе.
         /// </summary>
         public virtual string GetSummary()
