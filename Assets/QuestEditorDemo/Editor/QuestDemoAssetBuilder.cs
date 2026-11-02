@@ -49,13 +49,9 @@ namespace Vokazhira.QuestEditor.Demo.Editor
                 AssetDatabase.CreateFolder(root, "Quests");
             }
 
-            var intro = CreateIntroQuest();
-            var forest = CreateForestQuest();
-            ReplaceAsset(intro, introPath);
-            ReplaceAsset(forest, forestPath);
-
-            var database = ScriptableObject.CreateInstance<QuestDatabase>();
-            ReplaceAsset(database, databasePath);
+            var intro = CreateOrUpdateAsset(CreateIntroQuest(), introPath);
+            var forest = CreateOrUpdateAsset(CreateForestQuest(), forestPath);
+            var database = CreateOrUpdateAsset(ScriptableObject.CreateInstance<QuestDatabase>(), databasePath);
             var serializedDatabase = new SerializedObject(database);
             var quests = serializedDatabase.FindProperty("quests");
             quests.arraySize = 2;
@@ -64,7 +60,11 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             serializedDatabase.ApplyModifiedPropertiesWithoutUndo();
 
             AssetDatabase.SaveAssets();
-            CreateScene(scenePath, database);
+            if (!CreateScene(scenePath, databasePath))
+            {
+                return;
+            }
+
             AssetDatabase.Refresh();
 
             EditorUtility.DisplayDialog("Quest Editor Demo", $"Демо создано в «{root}». Откройте сцену QuestDemo и нажмите Play.", "OK");
@@ -146,9 +146,19 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             return graph;
         }
 
-        private static void CreateScene(string scenePath, QuestDatabase database)
+        /// <summary>
+        /// Создаёт сцену демо. База загружается заново после <c>NewScene</c>: открытие новой сцены в режиме Single
+        /// выгружает неиспользуемые ассеты, и ранее полученная ссылка на базу становится пустой.
+        /// </summary>
+        private static bool CreateScene(string scenePath, string databasePath)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            var database = AssetDatabase.LoadAssetAtPath<QuestDatabase>(databasePath);
+            if (database == null)
+            {
+                Debug.LogError($"Quest Editor Demo: база заданий не найдена по пути «{databasePath}».");
+                return false;
+            }
 
             var demo = new GameObject("QuestDemo");
             var bootstrap = demo.AddComponent<QuestDemoBootstrap>();
@@ -162,17 +172,32 @@ namespace Vokazhira.QuestEditor.Demo.Editor
             serializedUi.FindProperty("bootstrap").objectReferenceValue = bootstrap;
             serializedUi.ApplyModifiedPropertiesWithoutUndo();
 
-            EditorSceneManager.SaveScene(scene, scenePath);
+            return EditorSceneManager.SaveScene(scene, scenePath);
         }
 
-        private static void ReplaceAsset(Object asset, string path)
+        /// <summary>
+        /// Создаёт ассет или, если ассет того же типа уже есть, переносит в него данные. Так при повторной сборке
+        /// GUID ассетов (и их .meta) не меняются. Возвращает сохранённый в проекте объект.
+        /// </summary>
+        private static T CreateOrUpdateAsset<T>(T asset, string path) where T : ScriptableObject
         {
-            if (AssetDatabase.LoadMainAssetAtPath(path) != null)
+            var existing = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (existing == null)
             {
-                AssetDatabase.DeleteAsset(path);
+                if (AssetDatabase.LoadMainAssetAtPath(path) != null)
+                {
+                    AssetDatabase.DeleteAsset(path);
+                }
+
+                AssetDatabase.CreateAsset(asset, path);
+                return asset;
             }
 
-            AssetDatabase.CreateAsset(asset, path);
+            asset.name = existing.name;
+            EditorUtility.CopySerialized(asset, existing);
+            Object.DestroyImmediate(asset);
+            EditorUtility.SetDirty(existing);
+            return existing;
         }
 
         private static void Connect(QuestGraphAsset graph, QuestNodeData from, string fromPort, QuestNodeData to, string toPort)
