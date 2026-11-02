@@ -358,3 +358,10 @@ QuestCompletedCondition».
 **Решение:** `QuestValidatorTestNodes.cs` (этап 5) разделён на `RewardSinkTestNode.cs` и `ThrowingValidationTestNode.cs`;
 старый файл и его `.meta` удалены.
 **Причина:** правило CLAUDE.md «один класс — один файл».
+
+### D-065 · 2026-11-02 · `QuestManager` принимает необязательный `UnityEngine.ILogger` (реализуется на этапе 7)
+**Решение:** на этапе 7 конструктор станет `QuestManager(QuestDatabase database, IQuestSaveService saveService, ILogger logger = null)`;
+без логгера используется `Debug.unityLogger`. Все сообщения менеджера идут через него. Тесты передают логгер, который
+запоминает сообщения и ничего не выводит, и проверяют их вместо `LogAssert.Expect`.
+**Причина:** решение заказчика: ожидаемые ошибки тестов не должны оставаться в Console; игра получает контроль над
+логами заданий (фильтр, перенаправление). Конструктор на этапе 7 всё равно меняется.
