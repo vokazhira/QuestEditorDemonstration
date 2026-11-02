@@ -326,6 +326,6 @@ Decisions.md. `QuestGraphRunner`, `QuestRewardDispatcher`, `QuestInstance` — `
 
 | Риск | Что делаем |
 |---|---|
-| Тесты встроенного (embedded) пакета могут не появиться в Test Runner без `testables` в `manifest.json` | Проверка на этапе 1 вашими руками. Если тестов не видно — попрошу разрешения добавить `"testables": ["com.vokazhira.quest-editor"]` в `manifest.json` |
+| Тесты встроенного (embedded) пакета могут не появиться в Test Runner без `testables` в `manifest.json` | **Снят (этап 2):** тесты пакета видны в Test Runner без `testables`; 39/39 EditMode-тестов прошли в Unity 2023.1.22f1 |
 | Я не могу запустить Unity в этой среде (Linux-контейнер, Unity нет) | Компиляцию и тесты подтверждаете вы; в отчётах это прямо указано |
 | Переименование namespace/сборки после появления ассетов сломает `[SerializeReference]`-данные | Имена зафиксированы до этапа 1: `com.vokazhira.quest-editor` / `Vokazhira.QuestEditor` (D-001) |
