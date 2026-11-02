@@ -77,6 +77,37 @@ namespace Vokazhira.QuestEditor.Editor
             return removed;
         }
 
+        /// <summary>
+        /// Удаляет связи узла, которые ссылаются на порты, которых у узлов больше нет
+        /// (например, у End сменили результат на Failed и пропал порт наград). Возвращает число удалённых связей.
+        /// </summary>
+        public static int RemoveDanglingEdges(QuestGraphAsset graph, string nodeId)
+        {
+            var dangling = new List<QuestEdgeData>();
+            foreach (var edge in graph.Edges)
+            {
+                if (edge == null || !edge.Touches(nodeId))
+                {
+                    continue;
+                }
+
+                var fromPort = graph.FindNode(edge.FromNodeId)?.FindPort(edge.FromPortId);
+                var toPort = graph.FindNode(edge.ToNodeId)?.FindPort(edge.ToPortId);
+                if (fromPort == null || toPort == null)
+                {
+                    dangling.Add(edge);
+                }
+            }
+
+            if (dangling.Count == 0)
+            {
+                return 0;
+            }
+
+            Disconnect(graph, dangling);
+            return dangling.Count;
+        }
+
         public static bool RemoveNodes(QuestGraphAsset graph, IReadOnlyCollection<string> nodeIds)
         {
             if (nodeIds.Count == 0)

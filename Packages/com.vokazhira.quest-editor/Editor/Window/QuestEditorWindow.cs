@@ -26,6 +26,7 @@ namespace Vokazhira.QuestEditor.Editor
         private QuestLibraryView library;
         private Label graphPlaceholder;
         private QuestGraphView graphView;
+        private QuestNodeInspector inspector;
         private SerializedObject serializedGraph;
 
         private bool HasOpenQuest => session != null && session.IsAlive;
@@ -159,12 +160,17 @@ namespace Vokazhira.QuestEditor.Editor
             center.AddToClassList("qe-center");
             graphView = new QuestGraphView(this);
             graphView.ModelChanged += OnGraphModelChanged;
+            graphView.SelectionChanged += () => RefreshInspector(false);
             graphView.viewTransformChanged = OnViewTransformChanged;
             center.Add(graphView);
             graphPlaceholder = new Label();
             graphPlaceholder.AddToClassList("qe-graph-placeholder");
             center.Add(graphPlaceholder);
             body.Add(center);
+
+            inspector = new QuestNodeInspector();
+            inspector.NodeChanged += OnInspectorNodeChanged;
+            body.Add(inspector);
 
             library.Refresh();
             BindSession();
@@ -201,6 +207,7 @@ namespace Vokazhira.QuestEditor.Editor
 
             settingsPanel?.Bind(serializedGraph);
             graphView?.SetGraph(HasOpenQuest ? session.Graph : null);
+            RefreshInspector(true);
             library?.SetCurrent(HasOpenQuest ? session.AssetGuid : null);
             UpdateUnsavedState();
         }
@@ -229,6 +236,7 @@ namespace Vokazhira.QuestEditor.Editor
             settingsPanel.style.display = hasQuest && settingsVisible ? DisplayStyle.Flex : DisplayStyle.None;
 
             graphView.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
+            inspector.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
             graphPlaceholder.style.display = hasQuest ? DisplayStyle.None : DisplayStyle.Flex;
             graphPlaceholder.text = "Выберите задание в библиотеке (двойной клик) или создайте новое кнопкой New.";
         }
@@ -243,12 +251,51 @@ namespace Vokazhira.QuestEditor.Editor
             session.Graph.InvalidateNodeIndex();
             serializedGraph?.Update();
             graphView?.Rebuild();
+            RefreshInspector(true);
             UpdateUnsavedState();
         }
 
         private void OnGraphModelChanged()
         {
             serializedGraph?.Update();
+            RefreshInspector(false);
+            UpdateUnsavedState();
+        }
+
+        private void RefreshInspector(bool force)
+        {
+            if (inspector == null)
+            {
+                return;
+            }
+
+            var graph = HasOpenQuest ? session.Graph : null;
+            inspector.Show(serializedGraph, graph, graphView?.SelectedNodeId, force);
+        }
+
+        private void OnInspectorNodeChanged(string nodeId)
+        {
+            if (!HasOpenQuest || graphView == null)
+            {
+                return;
+            }
+
+            if (graphView.HasPortsMatchingModel(nodeId))
+            {
+                graphView.RefreshNode(nodeId);
+            }
+            else
+            {
+                var removed = QuestGraphEditing.RemoveDanglingEdges(session.Graph, nodeId);
+                serializedGraph?.Update();
+                graphView.Rebuild();
+                graphView.SelectNode(nodeId);
+                if (removed > 0)
+                {
+                    ShowNotification(new GUIContent($"Удалено связей к исчезнувшим портам: {removed}."));
+                }
+            }
+
             UpdateUnsavedState();
         }
 

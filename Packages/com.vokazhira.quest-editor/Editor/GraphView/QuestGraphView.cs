@@ -55,6 +55,23 @@ namespace Vokazhira.QuestEditor.Editor
 
         public event Action ModelChanged;
 
+        /// <summary>
+        /// Выделение изменилось. Не вызывается во время пересборки — после неё вызывается один раз.
+        /// </summary>
+        public event Action SelectionChanged;
+
+        /// <summary>
+        /// Id узла, если выделен ровно один узел; иначе null.
+        /// </summary>
+        public string SelectedNodeId
+        {
+            get
+            {
+                var selectedNodes = selection.OfType<QuestNodeView>().Take(2).ToList();
+                return selectedNodes.Count == 1 ? selectedNodes[0].NodeId : null;
+            }
+        }
+
         public QuestGraphAsset Graph => graph;
 
         public void SetGraph(QuestGraphAsset value)
@@ -109,6 +126,71 @@ namespace Vokazhira.QuestEditor.Editor
             finally
             {
                 isRebuilding = false;
+            }
+
+            SelectionChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Обновляет заголовок узла из модели после изменения его полей.
+        /// </summary>
+        public void RefreshNode(string nodeId)
+        {
+            var node = graph?.FindNode(nodeId);
+            if (node != null && nodeViews.TryGetValue(nodeId, out var view))
+            {
+                view.Refresh(node);
+            }
+        }
+
+        /// <summary>
+        /// Совпадает ли набор портов на холсте с портами узла в модели.
+        /// </summary>
+        public bool HasPortsMatchingModel(string nodeId)
+        {
+            var node = graph?.FindNode(nodeId);
+            if (node == null || !nodeViews.TryGetValue(nodeId, out var view))
+            {
+                return true;
+            }
+
+            var modelPorts = new HashSet<string>(node.Ports.Select(p => p.PortId));
+            var viewPorts = new HashSet<string>(view.AllPorts.Select(p => (string)p.userData));
+            return modelPorts.SetEquals(viewPorts);
+        }
+
+        public void SelectNode(string nodeId)
+        {
+            if (nodeId != null && nodeViews.TryGetValue(nodeId, out var view))
+            {
+                ClearSelection();
+                AddToSelection(view);
+            }
+        }
+
+        public override void AddToSelection(ISelectable selectable)
+        {
+            base.AddToSelection(selectable);
+            NotifySelectionChanged();
+        }
+
+        public override void RemoveFromSelection(ISelectable selectable)
+        {
+            base.RemoveFromSelection(selectable);
+            NotifySelectionChanged();
+        }
+
+        public override void ClearSelection()
+        {
+            base.ClearSelection();
+            NotifySelectionChanged();
+        }
+
+        private void NotifySelectionChanged()
+        {
+            if (!isRebuilding)
+            {
+                SelectionChanged?.Invoke();
             }
         }
 

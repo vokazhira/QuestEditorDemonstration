@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -59,6 +60,28 @@ namespace Vokazhira.QuestEditor.Editor
 
         public string NodeId { get; }
 
+        public IEnumerable<Port> AllPorts
+        {
+            get
+            {
+                foreach (var element in inputContainer.Children())
+                {
+                    if (element is Port port)
+                    {
+                        yield return port;
+                    }
+                }
+
+                foreach (var element in outputContainer.Children())
+                {
+                    if (element is Port port)
+                    {
+                        yield return port;
+                    }
+                }
+            }
+        }
+
         public void Refresh(QuestNodeData data)
         {
             title = data.GetSummary();
@@ -67,17 +90,9 @@ namespace Vokazhira.QuestEditor.Editor
 
         public Port FindPort(string portId)
         {
-            foreach (var element in inputContainer.Children())
+            foreach (var port in AllPorts)
             {
-                if (element is Port port && (string)port.userData == portId)
-                {
-                    return port;
-                }
-            }
-
-            foreach (var element in outputContainer.Children())
-            {
-                if (element is Port port && (string)port.userData == portId)
+                if ((string)port.userData == portId)
                 {
                     return port;
                 }

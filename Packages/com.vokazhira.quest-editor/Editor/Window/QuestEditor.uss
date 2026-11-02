@@ -89,3 +89,42 @@
     white-space: normal;
     opacity: 0.6;
 }
+
+.qe-inspector {
+    width: 300px;
+    min-width: 240px;
+    flex-shrink: 0;
+    border-left-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.35);
+    padding: 4px 6px;
+}
+
+.qe-inspector__title {
+    -unity-font-style: bold;
+    padding: 2px 2px 4px 2px;
+    opacity: 0.7;
+}
+
+.qe-inspector__header {
+    -unity-font-style: bold;
+    font-size: 14px;
+    padding: 2px;
+}
+
+.qe-inspector__subheader {
+    font-size: 10px;
+    opacity: 0.55;
+    padding: 0 2px 6px 2px;
+    white-space: normal;
+}
+
+.qe-inspector__scroll {
+    flex-grow: 1;
+}
+
+.qe-inspector__fields #empty,
+.qe-inspector__fields #no-fields {
+    white-space: normal;
+    opacity: 0.6;
+    padding: 4px 2px;
+}
