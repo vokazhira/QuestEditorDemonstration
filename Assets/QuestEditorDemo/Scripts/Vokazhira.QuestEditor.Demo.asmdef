@@ -1,0 +1,16 @@
+{
+    "name": "Vokazhira.QuestEditor.Demo",
+    "rootNamespace": "Vokazhira.QuestEditor.Demo",
+    "references": [
+        "Vokazhira.QuestEditor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
