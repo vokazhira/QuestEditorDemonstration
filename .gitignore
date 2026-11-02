@@ -115,3 +115,7 @@ InitTestScene*.unity*
 
 # JetBrains Rider per-developer settings
 .idea/
+
+# Package samples imported through the Package Manager (originals live in Samples~)
+/[Aa]ssets/[Ss]amples/
+/[Aa]ssets/[Ss]amples.meta
