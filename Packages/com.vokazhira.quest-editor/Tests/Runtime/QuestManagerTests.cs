@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 namespace Vokazhira.QuestEditor.Tests
@@ -13,6 +11,7 @@ namespace Vokazhira.QuestEditor.Tests
         private readonly List<Object> createdObjects = new List<Object>();
         private FakeCurrencyService currency;
         private FakeExperienceService experience;
+        private TestLogHandler log;
         private QuestManager manager;
 
         [SetUp]
@@ -20,6 +19,7 @@ namespace Vokazhira.QuestEditor.Tests
         {
             currency = new FakeCurrencyService();
             experience = new FakeExperienceService();
+            log = new TestLogHandler();
         }
 
         [TearDown]
@@ -268,13 +268,13 @@ namespace Vokazhira.QuestEditor.Tests
         public void InvalidGraph_IsRegisteredButRefusedToStart()
         {
             var broken = Linear("broken", QuestTestGraphs.Kill(string.Empty, 1));
-            LogAssert.Expect(LogType.Error, new Regex("broken.*ошибки"));
             CreateManager(broken);
 
+            Assert.That(log.Contains(LogType.Error, "«broken» содержит ошибки"), Is.True, log.ToString());
             Assert.That(manager.GetValidationErrors("broken"), Is.Not.Empty);
             Assert.That(manager.CanStart("broken"), Is.False);
-            LogAssert.Expect(LogType.Warning, new Regex("broken.*нельзя запустить"));
             Assert.That(manager.Start("broken"), Is.False);
+            Assert.That(log.Contains(LogType.Warning, "«broken» нельзя запустить"), Is.True, log.ToString());
             Assert.That(manager.GetState("broken"), Is.EqualTo(QuestState.Available));
         }
 
@@ -284,6 +284,18 @@ namespace Vokazhira.QuestEditor.Tests
             CreateManager(Linear("hunt", QuestTestGraphs.Kill("goblin", 1)));
 
             Assert.That(manager.GetValidationErrors("hunt"), Is.Empty);
+            Assert.That(log.Count(LogType.Error), Is.EqualTo(0), log.ToString());
+        }
+
+        [Test]
+        public void WithoutLogger_UsesUnityLoggerAndDoesNotThrow()
+        {
+            var database = QuestTestGraphs.CreateDatabase(Linear("hunt", QuestTestGraphs.Kill("goblin", 1)));
+            createdObjects.Add(database);
+
+            manager = new QuestManager(database, null);
+
+            Assert.That(manager.Start("hunt"), Is.True);
         }
 
         [Test]
@@ -292,10 +304,10 @@ namespace Vokazhira.QuestEditor.Tests
             CreateManager(Linear("hunt", QuestTestGraphs.Kill("goblin", 1)));
             manager.Start("hunt");
 
-            LogAssert.Expect(LogType.Warning, new Regex("hunt.*нельзя запустить"));
             Assert.That(manager.Start("hunt"), Is.False);
-            LogAssert.Expect(LogType.Warning, new Regex("missing.*нельзя запустить"));
             Assert.That(manager.Start("missing"), Is.False);
+            Assert.That(log.Contains(LogType.Warning, "«hunt» нельзя запустить"), Is.True, log.ToString());
+            Assert.That(log.Contains(LogType.Warning, "«missing» нельзя запустить"), Is.True, log.ToString());
             Assert.That(manager.GetState("missing"), Is.EqualTo(QuestState.Available));
             Assert.That(manager.GetInstance("missing"), Is.Null);
         }
@@ -371,14 +383,14 @@ namespace Vokazhira.QuestEditor.Tests
         [Test]
         public void Constructor_NullDatabase_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new QuestManager(null));
+            Assert.Throws<ArgumentNullException>(() => new QuestManager(null, null));
         }
 
         private void CreateManager(params QuestGraphAsset[] quests)
         {
             var database = QuestTestGraphs.CreateDatabase(quests);
             createdObjects.Add(database);
-            manager = new QuestManager(database);
+            manager = new QuestManager(database, null, new Logger(log));
         }
 
         private void RegisterBuiltInHandlers()

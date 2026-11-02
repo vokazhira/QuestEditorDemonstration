@@ -28,6 +28,12 @@ namespace Vokazhira.QuestEditor
 
         public QuestState State { get; internal set; }
 
+        /// <summary>
+        /// Задание восстановлено из сохранения, но продолжить его нельзя (например, сохранённого узла больше нет в графе).
+        /// Такое задание не реагирует на события, а его запись сохраняется обратно без изменений.
+        /// </summary>
+        public bool IsFrozen { get; internal set; }
+
         public string CurrentNodeId { get; internal set; }
 
         public QuestNodeData CurrentNode => string.IsNullOrEmpty(CurrentNodeId) ? null : Graph.FindNode(CurrentNodeId);
@@ -35,7 +41,7 @@ namespace Vokazhira.QuestEditor
         /// <summary>
         /// Цель, которую задание ждёт сейчас, или null, если задание не активно.
         /// </summary>
-        public ObjectiveNodeData CurrentObjective => State == QuestState.Active ? CurrentNode as ObjectiveNodeData : null;
+        public ObjectiveNodeData CurrentObjective => State == QuestState.Active && !IsFrozen ? CurrentNode as ObjectiveNodeData : null;
 
         public IReadOnlyDictionary<string, int> Progress => progress;
 
@@ -66,6 +72,13 @@ namespace Vokazhira.QuestEditor
             progress.Clear();
             grantedRewardIds.Clear();
             CurrentNodeId = null;
+            IsFrozen = false;
+        }
+
+        internal void ResetToAvailable()
+        {
+            ResetProgress();
+            State = QuestState.Available;
         }
 
         public override string ToString()
