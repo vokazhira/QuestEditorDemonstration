@@ -1,0 +1,14 @@
+{
+  "name": "com.vokazhira.quest-editor",
+  "version": "0.1.0",
+  "displayName": "Quest Editor",
+  "description": "Визуальный редактор заданий на графе и runtime-система их исполнения.",
+  "unity": "2023.1",
+  "author": {
+    "name": "vokazhira"
+  },
+  "dependencies": {
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  }
+}

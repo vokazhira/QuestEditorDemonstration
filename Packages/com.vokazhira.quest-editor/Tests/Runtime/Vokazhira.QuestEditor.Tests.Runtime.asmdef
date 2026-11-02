@@ -1,0 +1,24 @@
+{
+    "name": "Vokazhira.QuestEditor.Tests.Runtime",
+    "rootNamespace": "Vokazhira.QuestEditor.Tests",
+    "references": [
+        "Vokazhira.QuestEditor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
