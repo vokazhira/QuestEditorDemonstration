@@ -38,6 +38,45 @@ namespace Vokazhira.QuestEditor.Editor
             return changed;
         }
 
+        /// <summary>
+        /// Добавляет связь, если её разрешают <see cref="QuestPortRules"/> и она не замыкает Flow-цикл.
+        /// При отказе модель не меняется и Undo не записывается.
+        /// </summary>
+        public static bool TryConnect(QuestGraphAsset graph, QuestEdgeData edge, out string reason)
+        {
+            if (!QuestPortRules.CanConnect(graph, edge.FromNodeId, edge.FromPortId, edge.ToNodeId, edge.ToPortId, out reason))
+            {
+                return false;
+            }
+
+            var fromPort = graph.FindNode(edge.FromNodeId).FindPort(edge.FromPortId);
+            if (fromPort.Kind == QuestPortKind.Flow && QuestPortRules.WouldCreateFlowCycle(graph, edge.FromNodeId, edge.ToNodeId))
+            {
+                reason = "Связь замыкает цикл: циклы в потоке задания запрещены.";
+                return false;
+            }
+
+            Undo.RecordObject(graph, "Connect Quest Nodes");
+            return graph.TryConnect(edge.FromNodeId, edge.FromPortId, edge.ToNodeId, edge.ToPortId, out reason);
+        }
+
+        public static bool Disconnect(QuestGraphAsset graph, IReadOnlyList<QuestEdgeData> edges)
+        {
+            if (edges.Count == 0)
+            {
+                return false;
+            }
+
+            Undo.RecordObject(graph, edges.Count == 1 ? "Delete Quest Edge" : "Delete Quest Edges");
+            var removed = false;
+            foreach (var edge in edges)
+            {
+                removed |= graph.Disconnect(edge.FromNodeId, edge.FromPortId, edge.ToNodeId, edge.ToPortId);
+            }
+
+            return removed;
+        }
+
         public static bool RemoveNodes(QuestGraphAsset graph, IReadOnlyCollection<string> nodeIds)
         {
             if (nodeIds.Count == 0)

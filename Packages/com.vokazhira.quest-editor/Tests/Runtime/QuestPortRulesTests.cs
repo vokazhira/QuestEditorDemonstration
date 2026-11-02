@@ -148,6 +148,35 @@ namespace Vokazhira.QuestEditor.Tests
             Assert.That(allowed, Is.True, reason);
         }
 
+        [Test]
+        public void WouldCreateFlowCycle_DetectsLoopBackAlongFlow()
+        {
+            Connect(start, QuestPortIds.Out, kill, QuestPortIds.In);
+            Connect(kill, QuestPortIds.Out, condition, QuestPortIds.In);
+
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, condition.Id, kill.Id), Is.True);
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, condition.Id, start.Id), Is.True);
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, kill.Id, kill.Id), Is.True);
+        }
+
+        [Test]
+        public void WouldCreateFlowCycle_ForwardEdgeIsNotACycle()
+        {
+            Connect(start, QuestPortIds.Out, kill, QuestPortIds.In);
+            Connect(kill, QuestPortIds.Out, condition, QuestPortIds.In);
+
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, condition.Id, completed.Id), Is.False);
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, collect.Id, kill.Id), Is.False);
+        }
+
+        [Test]
+        public void WouldCreateFlowCycle_IgnoresRewardEdges()
+        {
+            Connect(gold, QuestPortIds.Reward, completed, QuestPortIds.Rewards);
+
+            Assert.That(QuestPortRules.WouldCreateFlowCycle(graph, completed.Id, gold.Id), Is.False);
+        }
+
         private T Add<T>(T node) where T : QuestNodeData
         {
             graph.AddNode(node);

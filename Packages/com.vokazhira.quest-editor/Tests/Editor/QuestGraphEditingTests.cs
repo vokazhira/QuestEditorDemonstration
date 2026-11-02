@@ -77,6 +77,80 @@ namespace Vokazhira.QuestEditor.Editor.Tests
         }
 
         [Test]
+        public void TryConnect_AddsEdgeAndCanBeUndone()
+        {
+            var start = new StartNodeData();
+            var kill = new KillObjective();
+            graph.AddNode(start);
+            graph.AddNode(kill);
+            Undo.IncrementCurrentGroup();
+
+            var connected = QuestGraphEditing.TryConnect(graph, new QuestEdgeData(start.Id, QuestPortIds.Out, kill.Id, QuestPortIds.In), out var reason);
+            Undo.FlushUndoRecordObjects();
+
+            Assert.That(connected, Is.True, reason);
+            Assert.That(graph.Edges.Count, Is.EqualTo(1));
+
+            Undo.PerformUndo();
+            Assert.That(graph.Edges, Is.Empty);
+
+            Undo.PerformRedo();
+            Assert.That(graph.HasEdge(start.Id, QuestPortIds.Out, kill.Id, QuestPortIds.In), Is.True);
+        }
+
+        [Test]
+        public void TryConnect_IncompatiblePorts_IsRejectedWithReason()
+        {
+            var kill = new KillObjective();
+            var end = new EndNodeData();
+            graph.AddNode(kill);
+            graph.AddNode(end);
+
+            var connected = QuestGraphEditing.TryConnect(graph, new QuestEdgeData(kill.Id, QuestPortIds.Out, end.Id, QuestPortIds.Rewards), out var reason);
+
+            Assert.That(connected, Is.False);
+            Assert.That(reason, Is.Not.Empty);
+            Assert.That(graph.Edges, Is.Empty);
+        }
+
+        [Test]
+        public void TryConnect_FlowCycle_IsRejectedWithReason()
+        {
+            var a = new KillObjective();
+            var b = new CollectObjective();
+            graph.AddNode(a);
+            graph.AddNode(b);
+            graph.TryConnect(a.Id, QuestPortIds.Out, b.Id, QuestPortIds.In, out _);
+
+            var connected = QuestGraphEditing.TryConnect(graph, new QuestEdgeData(b.Id, QuestPortIds.Out, a.Id, QuestPortIds.In), out var reason);
+
+            Assert.That(connected, Is.False);
+            Assert.That(reason, Does.Contain("цикл"));
+            Assert.That(graph.Edges.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Disconnect_RemovesEdgeAndCanBeUndone()
+        {
+            var start = new StartNodeData();
+            var kill = new KillObjective();
+            graph.AddNode(start);
+            graph.AddNode(kill);
+            graph.TryConnect(start.Id, QuestPortIds.Out, kill.Id, QuestPortIds.In, out _);
+            Undo.IncrementCurrentGroup();
+
+            var removed = QuestGraphEditing.Disconnect(graph, new[] { new QuestEdgeData(start.Id, QuestPortIds.Out, kill.Id, QuestPortIds.In) });
+            Undo.FlushUndoRecordObjects();
+
+            Assert.That(removed, Is.True);
+            Assert.That(graph.Edges, Is.Empty);
+            Assert.That(graph.Nodes.Count, Is.EqualTo(2));
+
+            Undo.PerformUndo();
+            Assert.That(graph.HasEdge(start.Id, QuestPortIds.Out, kill.Id, QuestPortIds.In), Is.True);
+        }
+
+        [Test]
         public void RemoveNodes_RemovesEdgesAndCanBeUndone()
         {
             var start = new StartNodeData();

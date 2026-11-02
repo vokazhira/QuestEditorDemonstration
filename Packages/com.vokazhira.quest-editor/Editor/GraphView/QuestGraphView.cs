@@ -112,9 +112,34 @@ namespace Vokazhira.QuestEditor.Editor
             }
         }
 
+        /// <summary>
+        /// Порты, к которым можно протянуть связь от <paramref name="startPort"/> по <see cref="QuestPortRules"/>.
+        /// Занятость single-портов не учитывается: GraphView заменяет старую связь новой.
+        /// </summary>
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
-            return new List<Port>();
+            var result = new List<Port>();
+            if (graph == null || !(startPort.node is QuestNodeView startView))
+            {
+                return result;
+            }
+
+            foreach (var port in ports.ToList())
+            {
+                if (port.direction == startPort.direction || !(port.node is QuestNodeView view) || view == startView)
+                {
+                    continue;
+                }
+
+                var output = startPort.direction == Direction.Output ? startPort : port;
+                var input = output == startPort ? port : startPort;
+                if (IsCompatible(output, input))
+                {
+                    result.Add(port);
+                }
+            }
+
+            return result;
         }
 
         private QuestNodeView AddNodeView(QuestNodeData node)
@@ -142,8 +167,38 @@ namespace Vokazhira.QuestEditor.Editor
             }
 
             var edge = output.ConnectTo(input);
-            edge.capabilities &= ~(Capabilities.Deletable | Capabilities.Selectable | Capabilities.Copiable);
+            edge.capabilities &= ~Capabilities.Copiable;
             AddElement(edge);
+        }
+
+        private bool IsCompatible(Port output, Port input)
+        {
+            if (!TryGetEdgeData(output, input, out var data))
+            {
+                return false;
+            }
+
+            var fromNode = graph.FindNode(data.FromNodeId);
+            var toNode = graph.FindNode(data.ToNodeId);
+            return QuestPortRules.CanConnect(fromNode, fromNode?.FindPort(data.FromPortId), toNode, toNode?.FindPort(data.ToPortId), out _)
+                && !graph.HasEdge(data.FromNodeId, data.FromPortId, data.ToNodeId, data.ToPortId);
+        }
+
+        private static bool TryGetEdgeData(Port output, Port input, out QuestEdgeData data)
+        {
+            data = null;
+            if (output == null
+                || input == null
+                || !(output.node is QuestNodeView fromView)
+                || !(input.node is QuestNodeView toView)
+                || !(output.userData is string fromPortId)
+                || !(input.userData is string toPortId))
+            {
+                return false;
+            }
+
+            data = new QuestEdgeData(fromView.NodeId, fromPortId, toView.NodeId, toPortId);
+            return true;
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -158,6 +213,11 @@ namespace Vokazhira.QuestEditor.Editor
             if (change.elementsToRemove != null && change.elementsToRemove.Count > 0)
             {
                 modelChanged |= ApplyRemovals(change.elementsToRemove);
+            }
+
+            if (change.edgesToCreate != null && change.edgesToCreate.Count > 0)
+            {
+                modelChanged |= ApplyCreatedEdges(change.edgesToCreate);
             }
 
             if (change.movedElements != null && change.movedElements.Count > 0)
@@ -192,14 +252,55 @@ namespace Vokazhira.QuestEditor.Editor
             }
 
             var removedIds = new HashSet<string>(removedViews.Select(v => v.NodeId));
-            elementsToRemove.RemoveAll(e => e is Edge edge && !IsAttachedToRemovedNode(edge, removedIds));
+            var removedEdges = new List<QuestEdgeData>();
+            foreach (var edge in elementsToRemove.OfType<Edge>())
+            {
+                if (!IsAttachedToRemovedNode(edge, removedIds) && TryGetEdgeData(edge.output, edge.input, out var data))
+                {
+                    removedEdges.Add(data);
+                }
+            }
 
             foreach (var id in removedIds)
             {
                 nodeViews.Remove(id);
             }
 
-            return QuestGraphEditing.RemoveNodes(graph, removedIds);
+            var changed = QuestGraphEditing.Disconnect(graph, removedEdges);
+            changed |= QuestGraphEditing.RemoveNodes(graph, removedIds);
+            return changed;
+        }
+
+        private bool ApplyCreatedEdges(List<Edge> edgesToCreate)
+        {
+            var changed = false;
+            string rejection = null;
+
+            edgesToCreate.RemoveAll(edge =>
+            {
+                if (!TryGetEdgeData(edge.output, edge.input, out var data))
+                {
+                    rejection = "Порт не найден.";
+                    return true;
+                }
+
+                if (!QuestGraphEditing.TryConnect(graph, data, out var reason))
+                {
+                    rejection = reason;
+                    return true;
+                }
+
+                edge.capabilities &= ~Capabilities.Copiable;
+                changed = true;
+                return false;
+            });
+
+            if (rejection != null)
+            {
+                window.ShowNotification(new GUIContent("Связь отклонена: " + rejection));
+            }
+
+            return changed;
         }
 
         private static bool IsAttachedToRemovedNode(Edge edge, HashSet<string> removedIds)

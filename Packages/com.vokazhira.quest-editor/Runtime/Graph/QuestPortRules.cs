@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Vokazhira.QuestEditor
 {
@@ -100,6 +101,58 @@ namespace Vokazhira.QuestEditor
 
             reason = null;
             return true;
+        }
+
+        /// <summary>
+        /// Проверяет, замкнёт ли новая Flow-связь <paramref name="fromNodeId"/> → <paramref name="toNodeId"/> цикл:
+        /// то есть достижим ли <paramref name="fromNodeId"/> из <paramref name="toNodeId"/> по существующим Flow-связям.
+        /// Связи наград не учитываются.
+        /// </summary>
+        public static bool WouldCreateFlowCycle(QuestGraphAsset graph, string fromNodeId, string toNodeId)
+        {
+            if (graph == null || string.IsNullOrEmpty(fromNodeId) || string.IsNullOrEmpty(toNodeId))
+            {
+                return false;
+            }
+
+            if (string.Equals(fromNodeId, toNodeId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            var visited = new HashSet<string>(StringComparer.Ordinal) { toNodeId };
+            var pending = new Stack<string>();
+            pending.Push(toNodeId);
+
+            while (pending.Count > 0)
+            {
+                var current = pending.Pop();
+                foreach (var edge in graph.Edges)
+                {
+                    if (edge == null || !string.Equals(edge.FromNodeId, current, StringComparison.Ordinal) || !IsFlowEdge(graph, edge))
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals(edge.ToNodeId, fromNodeId, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+
+                    if (visited.Add(edge.ToNodeId))
+                    {
+                        pending.Push(edge.ToNodeId);
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsFlowEdge(QuestGraphAsset graph, QuestEdgeData edge)
+        {
+            var port = graph.FindNode(edge.FromNodeId)?.FindPort(edge.FromPortId);
+            return port != null && port.Kind == QuestPortKind.Flow;
         }
     }
 }
