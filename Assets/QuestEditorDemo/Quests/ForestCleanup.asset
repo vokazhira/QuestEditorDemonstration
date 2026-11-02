@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afde2a8d429e3c49bf66e469049699f, type: 3}
+  m_Name: ForestCleanup
+  m_EditorClassIdentifier: 
+  questId: forest_cleanup
+  displayName: "\u0417\u0430\u0447\u0438\u0441\u0442\u043A\u0430 \u043B\u0435\u0441\u0430"
+  description: "\u041F\u0435\u0440\u0435\u0431\u0435\u0439\u0442\u0435 \u0433\u043E\u0431\u043B\u0438\u043D\u043E\u0432
+    \u0432 \u043B\u0435\u0441\u0443. \u0421\u0442\u0430\u0440\u043E\u0441\u0442\u0430
+    \u0437\u0430\u043F\u043B\u0430\u0442\u0438\u0442, \u0442\u043E\u043B\u044C\u043A\u043E
+    \u0435\u0441\u043B\u0438 \u0432\u044B \u0443\u0436\u0435 \u043F\u0440\u043E\u0447\u043B\u0438
+    \u0435\u0433\u043E \u043F\u0438\u0441\u044C\u043C\u043E."
+  formatVersion: 1
+  rewardMode: 1
+  nodes:
+  - rid: 3661493626450214916
+  - rid: 3661493626450214917
+  - rid: 3661493626450214918
+  - rid: 3661493626450214919
+  - rid: 3661493626450214920
+  - rid: 3661493626450214921
+  - rid: 3661493626450214922
+  edges:
+  - fromNodeId: 5bbef4e6298545d4a9eadce6317e0747
+    fromPortId: out
+    toNodeId: 2595da45a7c14c13a85e784799151d9b
+    toPortId: in
+  - fromNodeId: 2595da45a7c14c13a85e784799151d9b
+    fromPortId: out
+    toNodeId: 0eb4d725773244acb97e7bb7cf1a188a
+    toPortId: in
+  - fromNodeId: 0eb4d725773244acb97e7bb7cf1a188a
+    fromPortId: true
+    toNodeId: 3ee3ecf49a374883b1f2e1a82eded20f
+    toPortId: in
+  - fromNodeId: 0eb4d725773244acb97e7bb7cf1a188a
+    fromPortId: false
+    toNodeId: 6e25a51a964f48e4a46701f2ace77840
+    toPortId: in
+  - fromNodeId: ac876a6556384a538b83aa3ea54f17d5
+    fromPortId: reward
+    toNodeId: 3ee3ecf49a374883b1f2e1a82eded20f
+    toPortId: rewards
+  - fromNodeId: 8d5e80c80a1241f8874550818e166186
+    fromPortId: reward
+    toNodeId: 3ee3ecf49a374883b1f2e1a82eded20f
+    toPortId: rewards
+  references:
+    version: 2
+    RefIds:
+    - rid: 3661493626450214916
+      type: {class: StartNodeData, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 5bbef4e6298545d4a9eadce6317e0747
+        position: {x: 0, y: 100}
+    - rid: 3661493626450214917
+      type: {class: KillObjective, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 2595da45a7c14c13a85e784799151d9b
+        position: {x: 220, y: 100}
+        objectiveId: 970265f846a7403a83b3ff3aafa3cb1b
+        title: "\u0423\u0431\u0438\u0442\u044C \u0433\u043E\u0431\u043B\u0438\u043D\u043E\u0432"
+        description: "\u0413\u043E\u0431\u043B\u0438\u043D\u044B \u0437\u0430\u0441\u0435\u043B\u0438
+          \u0432 \u043B\u0435\u0441\u0443."
+        isOptional: 0
+        enemyId: goblin
+        requiredCount: 10
+    - rid: 3661493626450214918
+      type: {class: QuestCompletedCondition, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 0eb4d725773244acb97e7bb7cf1a188a
+        position: {x: 520, y: 100}
+        questId: intro
+    - rid: 3661493626450214919
+      type: {class: EndNodeData, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 3ee3ecf49a374883b1f2e1a82eded20f
+        position: {x: 820, y: 0}
+        result: 0
+    - rid: 3661493626450214920
+      type: {class: EndNodeData, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 6e25a51a964f48e4a46701f2ace77840
+        position: {x: 820, y: 220}
+        result: 1
+    - rid: 3661493626450214921
+      type: {class: GoldReward, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: ac876a6556384a538b83aa3ea54f17d5
+        position: {x: 520, y: -160}
+        rewardId: f187d33f78e54acd82263573159eecf0
+        amount: 100
+    - rid: 3661493626450214922
+      type: {class: ExperienceReward, ns: Vokazhira.QuestEditor, asm: Vokazhira.QuestEditor}
+      data:
+        id: 8d5e80c80a1241f8874550818e166186
+        position: {x: 520, y: -60}
+        rewardId: 84ca1fa6590346359c8d6d02c7a41435
+        amount: 25
