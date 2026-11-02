@@ -43,6 +43,7 @@ namespace Vokazhira.QuestEditor.Tests
             quest.Kill.SetRequiredCount(10);
 
             var graph = quest.Graph;
+            graph.name = questId;
             graph.QuestId = questId;
             graph.DisplayName = "Зачистка леса";
             graph.AddNode(quest.Start);
@@ -60,6 +61,67 @@ namespace Vokazhira.QuestEditor.Tests
             Connect(graph, quest.Gold, QuestPortIds.Reward, quest.Completed, QuestPortIds.Rewards);
             Connect(graph, quest.Experience, QuestPortIds.Reward, quest.Completed, QuestPortIds.Rewards);
             return quest;
+        }
+
+        /// <summary>
+        /// Линейное задание Start → цели по порядку → End(Completed) с наградами.
+        /// </summary>
+        public static QuestGraphAsset CreateLinearQuest(
+            string questId,
+            ObjectiveNodeData[] objectives,
+            RewardNodeData[] rewards = null,
+            QuestRewardMode rewardMode = QuestRewardMode.AutoGrant)
+        {
+            var graph = ScriptableObject.CreateInstance<QuestGraphAsset>();
+            graph.name = questId;
+            graph.QuestId = questId;
+            graph.RewardMode = rewardMode;
+
+            var start = new StartNodeData();
+            var end = new EndNodeData { Result = QuestEndResult.Completed };
+            graph.AddNode(start);
+            graph.AddNode(end);
+
+            QuestNodeData previous = start;
+            var previousPort = QuestPortIds.Out;
+            foreach (var objective in objectives)
+            {
+                graph.AddNode(objective);
+                Connect(graph, previous, previousPort, objective, QuestPortIds.In);
+                previous = objective;
+                previousPort = QuestPortIds.Out;
+            }
+
+            Connect(graph, previous, previousPort, end, QuestPortIds.In);
+
+            foreach (var reward in rewards ?? Array.Empty<RewardNodeData>())
+            {
+                graph.AddNode(reward);
+                Connect(graph, reward, QuestPortIds.Reward, end, QuestPortIds.Rewards);
+            }
+
+            return graph;
+        }
+
+        public static KillObjective Kill(string enemyId, int count)
+        {
+            var objective = new KillObjective { EnemyId = enemyId, Description = "Убить " + enemyId };
+            objective.SetRequiredCount(count);
+            return objective;
+        }
+
+        public static CollectObjective Collect(string itemId, int count)
+        {
+            var objective = new CollectObjective { ItemId = itemId, Description = "Собрать " + itemId };
+            objective.SetRequiredCount(count);
+            return objective;
+        }
+
+        public static QuestDatabase CreateDatabase(params QuestGraphAsset[] quests)
+        {
+            var database = ScriptableObject.CreateInstance<QuestDatabase>();
+            database.SetQuests(quests);
+            return database;
         }
 
         public static void Connect(QuestGraphAsset graph, QuestNodeData from, string fromPort, QuestNodeData to, string toPort)

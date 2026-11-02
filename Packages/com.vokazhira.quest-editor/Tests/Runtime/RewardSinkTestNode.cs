@@ -16,18 +16,4 @@ namespace Vokazhira.QuestEditor.Tests
 
         public override IReadOnlyList<QuestPortDefinition> Ports => PortList;
     }
-
-    /// <summary>
-    /// Узел, проверка которого бросает исключение.
-    /// </summary>
-    [Serializable]
-    internal sealed class ThrowingValidationTestNode : QuestNodeData
-    {
-        public override IReadOnlyList<QuestPortDefinition> Ports => Array.Empty<QuestPortDefinition>();
-
-        public override void Validate(QuestValidationContext context)
-        {
-            throw new InvalidOperationException("boom");
-        }
-    }
 }
