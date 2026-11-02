@@ -4,6 +4,10 @@
   "displayName": "Quest Editor",
   "description": "Visual graph-based quest editor and a runtime system that executes the quests.",
   "unity": "2023.1",
+  "license": "MIT",
+  "documentationUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/README.md",
+  "changelogUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/CHANGELOG.md",
+  "licensesUrl": "https://github.com/vokazhira/QuestEditorDemonstration/blob/main/Packages/com.vokazhira.quest-editor/LICENSE.md",
   "author": {
     "name": "vokazhira"
   },
