@@ -463,3 +463,17 @@ Unity-пакетов. Заказчик может заменить её. Ссы�
 **Решение:** `README.md` (основной, английский) и `README.ru.md` (перевод) в корне пакета, `CHANGELOG.md` в формате
 Keep a Changelog, итоговый отчёт — `Docs/FinalReport.md` (на русском, как и прочие документы `Docs/`).
 **Причина:** этап 9 и раздел 12 спецификации; язык — по D-078.
+
+### D-081 · 2026-11-03 · Второй пример: 3D-сцена «доставить письмо» с NPC
+**Решение:** пример `NpcDeliveryExample` (сначала в `Assets/QuestEditorDemo/NpcDeliveryExample/`, затем — в `Samples~`, как в D-075).
+Игрок-капсула (WASD, камера сверху-сзади), NPC Elder выдаёт задание `deliver_letter` и письмо, NPC Blacksmith принимает
+письмо, Elder выдаёт 50 золота (ManualClaim). Сцену и ассеты создаёт команда **Tools → Quest Editor → Samples → Build NPC
+Delivery Scene**. Интерфейс — IMGUI, без ассетов UI.
+**Причина:** запрос заказчика. Пример проверяет критерий MVP №10: цель «доставить предмет» (`DeliverItemObjective`)
+и событие `ItemDelivered` объявлены в коде примера, без изменений пакета.
+
+### D-082 · 2026-11-03 · Взаимодействие с NPC — trigger-зоны, без поиска объектов
+**Решение:** у NPC есть trigger-`SphereCollider` (радиус 2.5), у игрока — `CharacterController` и кинематический `Rigidbody`;
+`PlayerInteractor` запоминает NPC в `OnTriggerEnter/Exit` и говорит с ближайшим по клавише E. Все ссылки (bootstrap, HUD,
+камера, список NPC) назначает команда сборки через SerializedObject.
+**Причина:** CLAUDE.md запрещает `FindObjectOfType`; кинематический `Rigidbody` гарантирует trigger-события.

@@ -1,0 +1,19 @@
+{
+    "name": "Vokazhira.QuestEditor.Samples.NpcDelivery.Editor",
+    "rootNamespace": "Vokazhira.QuestEditor.Samples.NpcDelivery.Editor",
+    "references": [
+        "Vokazhira.QuestEditor",
+        "Vokazhira.QuestEditor.Samples.NpcDelivery"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
